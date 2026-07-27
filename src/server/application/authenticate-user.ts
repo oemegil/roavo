@@ -1,21 +1,12 @@
 import "server-only";
 
-import {
-  AuthAccountDisabledError,
-  AuthInvalidCredentialsError,
-} from "@/lib/errors";
+import { AuthAccountDisabledError, AuthInvalidCredentialsError } from "@/lib/errors";
 import { recordAuthAuditEvent } from "@/lib/auth/audit";
-import {
-  DEV_LOGIN_BYPASS_USERNAME,
-  isDevLoginBypass,
-} from "@/lib/auth/dev-login-bypass";
+import { isDevLoginBypass, resolveDevLoginBypassUser } from "@/lib/auth/dev-login-bypass";
 import { normalizeEmail } from "@/lib/auth/normalize-email";
 import { verifyPassword } from "@/lib/auth/password";
 import { toAuthenticatedUser, type AuthenticatedUser } from "@/features/auth/types";
-import {
-  findUserByNormalizedEmail,
-  findUserByNormalizedUsername,
-} from "@/server/repositories/user-repository";
+import { findUserByNormalizedEmail } from "@/server/repositories/user-repository";
 
 export async function authenticateUser(input: {
   email: string;
@@ -23,7 +14,7 @@ export async function authenticateUser(input: {
   correlationId?: string;
 }): Promise<AuthenticatedUser & { tokenVersion: number }> {
   if (isDevLoginBypass(input.email, input.password)) {
-    const user = await findUserByNormalizedUsername(DEV_LOGIN_BYPASS_USERNAME);
+    const user = await resolveDevLoginBypassUser();
     if (!user || !user.profile || user.status !== "ACTIVE") {
       recordAuthAuditEvent({
         event: "login_failed",

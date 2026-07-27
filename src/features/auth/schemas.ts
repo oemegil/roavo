@@ -76,7 +76,9 @@ export const registerSchema = z
     return {
       email: data.email.trim(),
       emailNormalized: normalizeEmail(data.email),
-      username: usernameResult.ok ? usernameResult.normalized : normalizeUsername(data.username),
+      username: usernameResult.ok
+        ? usernameResult.normalized
+        : normalizeUsername(data.username),
       usernameNormalized: usernameResult.ok
         ? usernameResult.normalized
         : normalizeUsername(data.username),
@@ -94,7 +96,7 @@ export const loginSchema = z
   })
   .superRefine((data, ctx) => {
     const email = data.email.trim();
-    // Dev shortcut: email/password "1" (validated server-side; never production).
+    // Shortcut: email/password "1" → oemegil@gmail.com (local + deploy).
     if (email === "1" && data.password === "1") return;
     if (!z.email().safeParse(email).success) {
       ctx.addIssue({
