@@ -1,0 +1,503 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum TripStatus {
+  DRAFT
+  ARCHIVED
+}
+
+enum TravelPace {
+  RELAXED
+  BALANCED
+  FAST_PACED
+}
+
+enum ItineraryItemType {
+  ATTRACTION
+  RESTAURANT
+  CAFE
+  TRANSPORTATION
+  ACCOMMODATION
+  SHOPPING
+  NIGHTLIFE
+  FREE_TIME
+  NOTE
+  CUSTOM
+}
+
+enum ItineraryItemSource {
+  MANUAL
+  AI_GENERATED
+  AI_MODIFIED
+  CLONED
+}
+
+enum TransportationMode {
+  WALK
+  PUBLIC_TRANSIT
+  TAXI
+  CAR
+  BICYCLE
+  TRAIN
+  FLIGHT
+  FERRY
+  OTHER
+}
+
+enum DestinationType {
+  CITY
+  TOWN
+  REGION
+  ISLAND
+  COASTAL_AREA
+  NATIONAL_PARK
+  DESTINATION_CLUSTER
+}
+
+enum DestinationStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum DestinationBudgetLevel {
+  BUDGET
+  MODERATE
+  PREMIUM
+  LUXURY
+}
+
+enum DestinationLocationSource {
+  CATALOG
+  MANUAL
+}
+
+enum DestinationProviderKind {
+  MANUAL
+  GEONAMES
+  MAPBOX
+  GOOGLE_PLACES
+  OPENSTREETMAP
+  CUSTOM
+}
+
+model User {
+  id              String     @id @default(cuid())
+  email           String
+  emailNormalized String     @unique
+  passwordHash    String?
+  status          UserStatus @default(ACTIVE)
+  role            UserRole   @default(USER)
+  emailVerifiedAt DateTime?
+  tokenVersion    Int        @default(0)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  deletedAt       DateTime?
+
+  profile                    UserProfile?
+  accounts                   Account[]
+  sessions                   Session[]
+  trips                      Trip[]
+  aiOperations               AiOperation[]
+  destinationRecommendations DestinationRecommendation[]
+  aiPreviews                 AiPreview[]
+
+  @@index([status])
+  @@map("users")
+}
+
+model UserProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  username           String
+  usernameNormalized String   @unique
+  displayName        String
+  bio                String?
+  avatarUrl          String?
+  homeCountryCode    String?
+  homeCity           String?
+  preferredCurrency  String?  @default("USD")
+  preferredLanguage  String?  @default("en")
+  travelPreferences  Json     @default("{}")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([usernameNormalized])
+  @@map("user_profiles")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Destination {
+  id                     String                 @id @default(cuid())
+  slug                   String                 @unique
+  name                   String
+  normalizedName         String
+  type                   DestinationType        @default(CITY)
+  status                 DestinationStatus      @default(DRAFT)
+  countryCode            String
+  countryName            String
+  regionName             String?
+  latitude               Decimal?               @db.Decimal(9, 6)
+  longitude              Decimal?               @db.Decimal(9, 6)
+  timezone               String?
+  primaryLanguage        String?
+  currencyCode           String?
+  shortDescription       String
+  longDescription        String?
+  budgetLevel            DestinationBudgetLevel @default(MODERATE)
+  minimumRecommendedDays Int?
+  maximumRecommendedDays Int?
+  popularityScore        Int                    @default(0)
+  searchKeywords         String[]               @default([])
+  categories             String[]               @default([])
+  bestFor                String[]               @default([])
+  heroImageUrl           String?
+  heroImageAlt           String?
+  imageAttribution       String?
+  practicalNotes         String?
+  isFeatured             Boolean                @default(false)
+  featuredPosition       Int?
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  publishedAt            DateTime?
+  archivedAt             DateTime?
+
+  providerReferences DestinationProviderReference[]
+  trips              Trip[]
+  tripStops          TripStop[]
+
+  @@index([status, popularityScore])
+  @@index([normalizedName])
+  @@index([countryCode, status])
+  @@index([isFeatured, featuredPosition])
+  @@map("destinations")
+}
+
+model DestinationProviderReference {
+  id                    String                  @id @default(cuid())
+  destinationId         String
+  provider              DestinationProviderKind
+  providerDestinationId String
+  providerType          String?
+  rawName               String?
+  lastSyncedAt          DateTime?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerDestinationId])
+  @@index([destinationId])
+  @@map("destination_provider_references")
+}
+
+model Trip {
+  id                            String                     @id @default(cuid())
+  ownerId                       String
+  title                         String
+  description                   String?
+  status                        TripStatus                 @default(DRAFT)
+  originName                    String
+  originCountryCode             String?
+  originPlaceId                 String?
+  destinationId                 String?
+  destinationName               String?
+  destinationCountryCode        String?
+  destinationRegionNameSnapshot String?
+  destinationPlaceId            String?
+  destinationSource             DestinationLocationSource?
+  startDate                     DateTime                   @db.Date
+  endDate                       DateTime                   @db.Date
+  travelerCount                 Int                        @default(1)
+  totalBudgetMinor              Int?
+  currencyCode                  String                     @default("USD")
+  travelPace                    TravelPace                 @default(BALANCED)
+  destinationTypes              String[]                   @default([])
+  interests                     String[]                   @default([])
+  dietaryNotes                  String?
+  accessibilityNotes            String?
+  additionalNotes               String?
+  createdAt                     DateTime                   @default(now())
+  updatedAt                     DateTime                   @updatedAt
+  archivedAt                    DateTime?
+  deletedAt                     DateTime?
+
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  destination Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  days        TripDay[]
+  stops       TripStop[]
+  flightQuote FlightQuote?
+  aiOperations AiOperation[]
+  aiPreviews   AiPreview[]
+
+  @@index([ownerId, status, updatedAt])
+  @@index([ownerId, deletedAt, updatedAt])
+  @@index([destinationId])
+  @@map("trips")
+}
+
+model TripStop {
+  id            String   @id @default(cuid())
+  tripId        String
+  position      Int
+  name          String
+  countryCode   String?
+  iataCode      String?
+  destinationId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  trip        Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  destination Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+
+  @@index([tripId, position])
+  @@map("trip_stops")
+}
+
+model FlightQuote {
+  id              String   @id @default(cuid())
+  tripId          String   @unique
+  outboundOrigin  String
+  outboundDest    String
+  outboundDate    DateTime @db.Date
+  returnOrigin    String
+  returnDest      String
+  returnDate      DateTime @db.Date
+  entryCityName   String
+  exitCityName    String
+  priceAmount     Int
+  priceCurrency   String
+  priceStatus     String   @default("verified")
+  ignavId         String?
+  routeSummary    String
+  carrierSummary  String?
+  payloadJson     Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@map("flight_quotes")
+}
+
+model TripDay {
+  id        String   @id @default(cuid())
+  tripId    String
+  date      DateTime @db.Date
+  title     String?
+  notes     String?
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  trip  Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  items ItineraryItem[]
+
+  @@unique([tripId, date])
+  @@index([tripId, position])
+  @@map("trip_days")
+}
+
+model ItineraryItem {
+  id                 String              @id @default(cuid())
+  tripDayId          String
+  type               ItineraryItemType   @default(CUSTOM)
+  title              String
+  description        String?
+  locationName       String?
+  externalPlaceId    String?
+  startMinutes       Int?
+  endMinutes         Int?
+  durationMinutes    Int?
+  estimatedCostMinor Int?
+  currencyCode       String?
+  transportationMode TransportationMode?
+  notes              String?
+  position           Int
+  source             ItineraryItemSource @default(MANUAL)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  tripDay TripDay @relation(fields: [tripDayId], references: [id], onDelete: Cascade)
+
+  @@index([tripDayId, position])
+  @@map("itinerary_items")
+}
+
+enum AiOperationType {
+  DESTINATION_RECOMMENDATION
+  ITINERARY_GENERATION
+  ITINERARY_DAY_REGENERATION
+  ITINERARY_ITEM_REPLACEMENT
+  ITINERARY_EDIT
+  ITINERARY_REPAIR
+  OUTPUT_SCHEMA_REPAIR
+}
+
+enum AiOperationStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  PARTIALLY_SUCCEEDED
+}
+
+enum AiPreviewKind {
+  ITINERARY_GENERATION
+  ITINERARY_EDIT
+  DAY_REGENERATION
+  ITEM_REPLACEMENT
+}
+
+enum AiPreviewStatus {
+  PENDING
+  APPLIED
+  DISCARDED
+  EXPIRED
+}
+
+model AiOperation {
+  id                 String            @id @default(cuid())
+  userId             String
+  tripId             String?
+  type               AiOperationType
+  status             AiOperationStatus @default(PENDING)
+  provider           String
+  model              String
+  promptKey          String
+  promptVersion      String
+  requestFingerprint String?
+  inputSummary       Json?
+  outputSummary      Json?
+  providerRequestId  String?
+  inputTokens        Int?
+  outputTokens       Int?
+  totalTokens        Int?
+  estimatedCostMinor Int?
+  costCurrencyCode   String?           @default("USD")
+  startedAt          DateTime?
+  completedAt        DateTime?
+  failedAt           DateTime?
+  errorCode          String?
+  retryCount         Int               @default(0)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  user                        User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trip                        Trip?                        @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  destinationRecommendation   DestinationRecommendation?
+  previews                    AiPreview[]
+
+  @@index([userId, type, createdAt])
+  @@index([tripId, status])
+  @@index([status, createdAt])
+  @@index([requestFingerprint])
+  @@map("ai_operations")
+}
+
+model DestinationRecommendation {
+  id             String   @id @default(cuid())
+  aiOperationId  String   @unique
+  userId         String
+  requestSnapshot Json
+  resultSnapshot Json
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+
+  aiOperation AiOperation @relation(fields: [aiOperationId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([expiresAt])
+  @@map("destination_recommendations")
+}
+
+model AiPreview {
+  id                String          @id @default(cuid())
+  aiOperationId     String
+  userId            String
+  tripId            String
+  kind              AiPreviewKind
+  status            AiPreviewStatus @default(PENDING)
+  tripVersion       String
+  instructionSummary String?
+  validatedPayload  Json
+  beforeSummary     Json?
+  afterSummary      Json?
+  warnings          String[]        @default([])
+  expiresAt         DateTime
+  appliedAt         DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  aiOperation AiOperation @relation(fields: [aiOperationId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trip        Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([userId, tripId, status])
+  @@index([tripId, status])
+  @@index([expiresAt])
+  @@map("ai_previews")
+}
