@@ -242,6 +242,8 @@ export async function executeStructuredAiOperation<TInput, TOutput>(input: {
       (process.env.AI_ENABLE_REPAIR !== "false" && AI_DEFAULTS.enableRepair);
 
     if (!parsed.success && repairEnabled) {
+      // Capture before the loop — `parsed` is reassigned inside, so TS loses the narrow.
+      const validationError = parsed.error;
       // Prefer a Gemini fallback for repair when primary dumped prose / truncated.
       const repairProviders: AiProvider[] = [
         provider,
@@ -253,7 +255,7 @@ export async function executeStructuredAiOperation<TInput, TOutput>(input: {
           const repairResult = await repairProvider.generateStructured({
             operation: "OUTPUT_SCHEMA_REPAIR",
             systemPrompt: repairSystemPrompt,
-            userPrompt: `Invalid JSON:\n${rawText.slice(0, 40_000)}\n\nValidation issues:\n${parsed.error}\n\nSchema:\n${input.prompt.schemaHint}\n\nReturn a COMPLETE valid JSON object including all required days.`,
+            userPrompt: `Invalid JSON:\n${rawText.slice(0, 40_000)}\n\nValidation issues:\n${validationError}\n\nSchema:\n${input.prompt.schemaHint}\n\nReturn a COMPLETE valid JSON object including all required days.`,
             schemaHint: input.prompt.schemaHint,
             temperature: 0,
             maxOutputTokens: input.prompt.defaults.maxOutputTokens,
