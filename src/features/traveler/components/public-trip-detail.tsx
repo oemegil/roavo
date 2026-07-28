@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Heart } from "lucide-react";
 
+import { TripCommentsSection } from "@/features/traveler/components/trip-comments";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,7 @@ type PublicTripDetail = {
   startDate: string;
   endDate: string;
   likeCount: number;
+  commentCount: number;
   likedByViewer: boolean;
   owner: {
     id: string;
@@ -165,6 +167,8 @@ export function PublicTripDetailClient({
           </Card>
         ))}
       </div>
+
+      <TripCommentsSection tripId={trip.id} initialCommentCount={trip.commentCount} />
     </section>
   );
 }

@@ -23,6 +23,7 @@ type ExploreTrip = {
   endDate: string;
   dayCount: number;
   likeCount: number;
+  commentCount: number;
   likedByViewer: boolean;
   owner: {
     id: string;
@@ -174,7 +175,7 @@ export function ExploreFeedClient() {
                     </CardDescription>
                     <p className="text-muted-foreground text-sm">
                       {trip.owner.displayName} · {trip.owner.badge.label} ·{" "}
-                      {trip.owner.travelerScore} puan
+                      {trip.owner.travelerScore} puan · {trip.commentCount} yorum
                     </p>
                   </div>
                   <Button

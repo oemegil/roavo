@@ -15,11 +15,16 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function TripsListClient({ initialStatus }: { initialStatus: "DRAFT" | "ARCHIVED" }) {
+export function TripsListClient({
+  initialStatus,
+}: {
+  initialStatus: "DRAFT" | "ARCHIVED";
+}) {
   const [status, setStatus] = useState<"DRAFT" | "ARCHIVED">(initialStatus);
   const [trips, setTrips] = useState<TripSummaryDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,13 +51,41 @@ export function TripsListClient({ initialStatus }: { initialStatus: "DRAFT" | "A
     };
   }, [status]);
 
+  async function toggleVisibility(trip: TripSummaryDto) {
+    if (trip.status === "ARCHIVED") return;
+    const next = trip.visibility === "PUBLIC" ? "PRIVATE" : "PUBLIC";
+    setTogglingId(trip.id);
+    setError(null);
+    const response = await fetch(`/api/v1/trips/${trip.id}/visibility`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ visibility: next }),
+    });
+    const payload = await response.json().catch(() => null);
+    setTogglingId(null);
+    if (!response.ok) {
+      setError(payload?.error?.message ?? "Görünürlük güncellenemedi.");
+      return;
+    }
+    setTrips((prev) =>
+      prev.map((row) =>
+        row.id === trip.id
+          ? {
+              ...row,
+              visibility: payload.trip?.visibility ?? next,
+            }
+          : row,
+      ),
+    );
+  }
+
   return (
     <section className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           <h1 className="text-heading">Gezilerin</h1>
           <p className="text-muted-foreground text-body">
-            Özel planla, istediğin zaman düzenle, sonra paylaş.
+            Yeni geziler özel başlar. Keşfet’te paylaşmak için herkese açık yap.
           </p>
         </div>
         <Button asChild className="w-full sm:w-auto">
@@ -86,7 +119,7 @@ export function TripsListClient({ initialStatus }: { initialStatus: "DRAFT" | "A
 
       {error ? (
         <Alert variant="destructive">
-          <AlertTitle>Geziler yüklenemedi</AlertTitle>
+          <AlertTitle>Geziler</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
@@ -114,32 +147,63 @@ export function TripsListClient({ initialStatus }: { initialStatus: "DRAFT" | "A
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {trips.map((trip) => (
-          <Link key={trip.id} href={`/trips/${trip.id}`} className="block">
-            <Card className="hover:border-primary/40 h-full transition-colors">
+        {trips.map((trip) => {
+          const isPublic = trip.visibility === "PUBLIC";
+          const checkboxId = `trip-public-${trip.id}`;
+          return (
+            <Card
+              key={trip.id}
+              className="hover:border-primary/40 h-full transition-colors"
+            >
               <CardHeader>
-                <CardTitle className="line-clamp-2">{trip.title}</CardTitle>
+                <CardTitle className="line-clamp-2">
+                  <Link href={`/trips/${trip.id}`} className="hover:underline">
+                    {trip.title}
+                  </Link>
+                </CardTitle>
                 <CardDescription>
                   {trip.destinationName ?? "Destinasyon seçilmedi"}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-muted-foreground space-y-1 text-sm">
-                <p>
-                  {trip.startDate} → {trip.endDate}
-                </p>
-                <p>
-                  {trip.travelerCount} gezgin
-                  {trip.totalBudgetMajor !== null
-                    ? ` · ${trip.currencyCode} ${trip.totalBudgetMajor}`
-                    : ""}
-                </p>
-                <p>
-                  {trip.dayCount} gün · {trip.itemCount} aktivite
-                </p>
+              <CardContent className="text-muted-foreground space-y-3 text-sm">
+                <div className="space-y-1">
+                  <p>
+                    {trip.startDate} → {trip.endDate}
+                  </p>
+                  <p>
+                    {trip.travelerCount} gezgin
+                    {trip.totalBudgetMajor !== null
+                      ? ` · ${trip.currencyCode} ${trip.totalBudgetMajor}`
+                      : ""}
+                  </p>
+                  <p>
+                    {trip.dayCount} gün · {trip.itemCount} aktivite
+                  </p>
+                </div>
+                {trip.status !== "ARCHIVED" ? (
+                  <label
+                    htmlFor={checkboxId}
+                    className="text-foreground flex cursor-pointer items-center gap-2"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <input
+                      id={checkboxId}
+                      type="checkbox"
+                      className="border-input size-4 rounded"
+                      checked={isPublic}
+                      disabled={togglingId === trip.id}
+                      onChange={() => void toggleVisibility(trip)}
+                      onClick={(event) => event.stopPropagation()}
+                    />
+                    <span>Herkese açık (Keşfet)</span>
+                  </label>
+                ) : (
+                  <p>{isPublic ? "Herkese açıktı" : "Özeldi"}</p>
+                )}
               </CardContent>
             </Card>
-          </Link>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

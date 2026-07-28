@@ -222,6 +222,7 @@ export async function listExploreTrips(input: {
         endDate: formatDateOnly(trip.endDate),
         dayCount: trip._count.days,
         likeCount: trip.likeCount,
+        commentCount: trip.commentCount,
         likedByViewer,
         owner: {
           id: trip.owner.id,
@@ -302,6 +303,7 @@ export async function getPublicTripDetail(input: {
     likedByViewer: Boolean(
       input.viewerId && Array.isArray(trip.likes) && trip.likes.length > 0,
     ),
+    commentCount: trip.commentCount,
     owner: {
       id: trip.owner.id,
       username: trip.owner.profile?.username ?? "gezgin",
@@ -367,6 +369,5 @@ export async function getTravelerProfileSummary(userId: string) {
     travelerScoreMinor: user.travelerScoreMinor,
     badge: primaryBadgeForScore(score),
     publicTripCount: user._count.trips,
-    verificationComingSoon: true,
   };
 }

@@ -22,7 +22,6 @@ type TravelerProfile = {
   travelerScore: number;
   badge: { id: string; label: string; description: string };
   publicTripCount: number;
-  verificationComingSoon: boolean;
 };
 
 export function TravelerProfileClient() {
@@ -92,11 +91,6 @@ export function TravelerProfileClient() {
           <p className="text-muted-foreground text-sm">
             {profile.publicTripCount} public gezi
           </p>
-          {profile.verificationComingSoon ? (
-            <p className="text-muted-foreground text-sm">
-              Fotoğraf doğrulama yakında — ekstra +3 puan için rezerv.
-            </p>
-          ) : null}
         </CardContent>
       </Card>
 
