@@ -2,29 +2,39 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Compass, Heart } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
 
+import { getInitials } from "@/features/auth/types";
+import { COMMENT_BODY_MAX } from "@/features/traveler/schemas";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+
+type ExploreComment = {
+  id: string;
+  body: string;
+  createdAt: string;
+  author: {
+    id: string;
+    username: string;
+    displayName: string;
+  };
+};
 
 type ExploreTrip = {
   id: string;
   title: string;
+  description: string | null;
   destinationName: string | null;
+  destinationRegion: string | null;
   startDate: string;
   endDate: string;
   dayCount: number;
   likeCount: number;
   commentCount: number;
   likedByViewer: boolean;
+  recentComments: ExploreComment[];
   owner: {
     id: string;
     username: string;
@@ -36,6 +46,23 @@ type ExploreTrip = {
   updatedAt: string;
 };
 
+function AvatarBubble({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
+  if (avatarUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={avatarUrl} alt="" className="size-9 rounded-full object-cover" />
+    );
+  }
+  return (
+    <div
+      aria-hidden
+      className="bg-muted text-foreground flex size-9 items-center justify-center rounded-full text-xs font-semibold tracking-wide"
+    >
+      {getInitials(name)}
+    </div>
+  );
+}
+
 export function ExploreFeedClient() {
   const [trips, setTrips] = useState<ExploreTrip[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -43,6 +70,8 @@ export function ExploreFeedClient() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [likingId, setLikingId] = useState<string | null>(null);
+  const [draftByTrip, setDraftByTrip] = useState<Record<string, string>>({});
+  const [postingId, setPostingId] = useState<string | null>(null);
 
   const load = useCallback(async (cursor?: string) => {
     const url = cursor
@@ -120,22 +149,53 @@ export function ExploreFeedClient() {
     );
   }
 
+  async function postComment(trip: ExploreTrip) {
+    const body = (draftByTrip[trip.id] ?? "").trim();
+    if (!body) return;
+    setPostingId(trip.id);
+    setError(null);
+    const response = await fetch(`/api/v1/trips/${trip.id}/comments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body }),
+    });
+    const payload = await response.json().catch(() => null);
+    setPostingId(null);
+    if (!response.ok) {
+      setError(payload?.error?.message ?? "Yorum eklenemedi.");
+      return;
+    }
+    const comment = payload.comment as ExploreComment;
+    setDraftByTrip((prev) => ({ ...prev, [trip.id]: "" }));
+    setTrips((prev) =>
+      prev.map((row) =>
+        row.id === trip.id
+          ? {
+              ...row,
+              commentCount:
+                typeof payload.commentCount === "number"
+                  ? payload.commentCount
+                  : row.commentCount + 1,
+              recentComments: [comment, ...row.recentComments].slice(0, 3),
+            }
+          : row,
+      ),
+    );
+  }
+
   return (
-    <section className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-heading flex items-center gap-2">
-          <Compass className="size-6" aria-hidden />
-          Keşfet
-        </h1>
-        <p className="text-muted-foreground text-body">
-          Topluluğun public planlarını gezgin puanına ve beğenilere göre sırala.
+    <section className="mx-auto w-full max-w-lg space-y-5">
+      <div className="space-y-1">
+        <h1 className="text-heading">Keşfet</h1>
+        <p className="text-muted-foreground text-sm">
+          Başkalarının planları, yorumlar ve gün batımları.
         </p>
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          <Skeleton className="h-28 w-full" />
-          <Skeleton className="h-28 w-full" />
+        <div className="space-y-4">
+          <Skeleton className="h-72 w-full rounded-2xl" />
+          <Skeleton className="h-72 w-full rounded-2xl" />
         </div>
       ) : null}
 
@@ -147,62 +207,161 @@ export function ExploreFeedClient() {
       ) : null}
 
       {!loading && !error && trips.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Henüz public gezi yok</CardTitle>
-            <CardDescription>
-              Bir geziyi ayarlardan herkese açık yapınca burada görünür.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <div className="border-border rounded-2xl border px-5 py-10 text-center">
+          <p className="font-medium">Şimdilik sessiz</p>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Başkaları public plan paylaşınca burada görünür.
+          </p>
+        </div>
       ) : null}
 
-      <ul className="space-y-3">
-        {trips.map((trip) => (
-          <li key={trip.id}>
-            <Card>
-              <CardHeader className="space-y-1">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 space-y-1">
-                    <CardTitle className="truncate">
-                      <Link href={`/explore/${trip.id}`} className="hover:underline">
-                        {trip.title}
-                      </Link>
-                    </CardTitle>
-                    <CardDescription>
-                      {trip.destinationName ?? "Rota"} · {trip.dayCount} gün ·{" "}
-                      {trip.startDate} → {trip.endDate}
-                    </CardDescription>
-                    <p className="text-muted-foreground text-sm">
-                      {trip.owner.displayName} · {trip.owner.badge.label} ·{" "}
-                      {trip.owner.travelerScore} puan · {trip.commentCount} yorum
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant={trip.likedByViewer ? "default" : "outline"}
-                    size="sm"
-                    disabled={likingId === trip.id}
-                    onClick={() => void toggleLike(trip)}
-                    aria-pressed={trip.likedByViewer}
-                  >
-                    <Heart
-                      className="mr-1 size-4"
-                      fill={trip.likedByViewer ? "currentColor" : "none"}
-                      aria-hidden
-                    />
-                    {trip.likeCount}
-                  </Button>
+      <ul className="space-y-6">
+        {trips.map((trip) => {
+          const placeLine =
+            trip.destinationRegion ||
+            trip.destinationName ||
+            `${trip.startDate} → ${trip.endDate}`;
+          const draft = draftByTrip[trip.id] ?? "";
+          return (
+            <li
+              key={trip.id}
+              className="border-border bg-muted/30 overflow-hidden rounded-2xl border"
+            >
+              <div className="flex items-center gap-3 px-4 pt-4 pb-3">
+                <AvatarBubble
+                  name={trip.owner.displayName}
+                  avatarUrl={trip.owner.avatarUrl}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">
+                    {trip.owner.displayName}
+                    <span className="text-muted-foreground font-normal">
+                      {" "}
+                      · @{trip.owner.username}
+                    </span>
+                  </p>
+                  <p className="text-muted-foreground truncate text-xs">
+                    {trip.owner.badge.label} · {trip.owner.travelerScore} puan
+                  </p>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <Button asChild variant="ghost" size="sm" className="px-0">
-                  <Link href={`/explore/${trip.id}`}>Planı incele</Link>
+              </div>
+
+              <div className="relative px-4 pb-3">
+                <div className="flex min-h-44 flex-col justify-end rounded-xl bg-gradient-to-br from-slate-900 via-slate-700 to-amber-600 p-5 text-white shadow-inner">
+                  <p className="text-[11px] tracking-[0.18em] uppercase opacity-80">
+                    {trip.dayCount} gün · {placeLine}
+                  </p>
+                  <h2 className="font-display mt-2 text-2xl leading-tight font-semibold">
+                    {trip.title}
+                  </h2>
+                  {trip.description ? (
+                    <p className="mt-2 line-clamp-3 text-sm text-white/85">
+                      {trip.description}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 px-2 pb-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={cn("gap-1.5", trip.likedByViewer && "text-red-600")}
+                  disabled={likingId === trip.id}
+                  onClick={() => void toggleLike(trip)}
+                  aria-pressed={trip.likedByViewer}
+                >
+                  <Heart
+                    className="size-5"
+                    fill={trip.likedByViewer ? "currentColor" : "none"}
+                    aria-hidden
+                  />
+                  {trip.likeCount}
                 </Button>
-              </CardContent>
-            </Card>
-          </li>
-        ))}
+                <Button
+                  asChild
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1.5"
+                >
+                  <Link href={`/explore/${trip.id}#comments`}>
+                    <MessageCircle className="size-5" aria-hidden />
+                    {trip.commentCount}
+                  </Link>
+                </Button>
+              </div>
+
+              <div className="space-y-2 px-4 pb-3">
+                <p className="text-sm">
+                  <span className="font-semibold">{trip.owner.username}</span>{" "}
+                  <span className="text-foreground/90">{trip.title}</span>
+                </p>
+
+                {trip.recentComments.length > 0 ? (
+                  <ul className="space-y-1.5">
+                    {[...trip.recentComments].reverse().map((comment) => (
+                      <li key={comment.id} className="text-sm">
+                        <span className="font-semibold">{comment.author.username}</span>{" "}
+                        <span className="text-foreground/90">{comment.body}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-muted-foreground text-sm">Henüz yorum yok.</p>
+                )}
+
+                {trip.commentCount > trip.recentComments.length ? (
+                  <Link
+                    href={`/explore/${trip.id}#comments`}
+                    className="text-muted-foreground text-sm hover:underline"
+                  >
+                    {trip.commentCount} yorumun tümünü gör
+                  </Link>
+                ) : null}
+
+                <Link
+                  href={`/explore/${trip.id}`}
+                  className="text-muted-foreground text-sm hover:underline"
+                >
+                  Planı aç
+                </Link>
+              </div>
+
+              <form
+                className="border-border flex items-center gap-2 border-t px-3 py-2"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void postComment(trip);
+                }}
+              >
+                <input
+                  value={draft}
+                  maxLength={COMMENT_BODY_MAX}
+                  placeholder="Yorum ekle…"
+                  className="placeholder:text-muted-foreground flex-1 bg-transparent px-1 py-2 text-sm outline-none"
+                  onChange={(event) =>
+                    setDraftByTrip((prev) => ({
+                      ...prev,
+                      [trip.id]: event.target.value,
+                    }))
+                  }
+                  disabled={postingId === trip.id}
+                />
+                <Button
+                  type="submit"
+                  variant="ghost"
+                  size="sm"
+                  disabled={postingId === trip.id || draft.trim().length === 0}
+                  className="text-foreground font-semibold"
+                >
+                  Paylaş
+                </Button>
+              </form>
+            </li>
+          );
+        })}
       </ul>
 
       {nextCursor ? (

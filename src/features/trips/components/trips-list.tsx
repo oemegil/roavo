@@ -51,15 +51,17 @@ export function TripsListClient({
     };
   }, [status]);
 
-  async function toggleVisibility(trip: TripSummaryDto) {
+  async function setVisibility(trip: TripSummaryDto, visibility: "PRIVATE" | "PUBLIC") {
     if (trip.status === "ARCHIVED") return;
-    const next = trip.visibility === "PUBLIC" ? "PRIVATE" : "PUBLIC";
+    if ((trip.visibility === "PUBLIC" ? "PUBLIC" : "PRIVATE") === visibility) {
+      return;
+    }
     setTogglingId(trip.id);
     setError(null);
     const response = await fetch(`/api/v1/trips/${trip.id}/visibility`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ visibility: next }),
+      body: JSON.stringify({ visibility }),
     });
     const payload = await response.json().catch(() => null);
     setTogglingId(null);
@@ -72,7 +74,7 @@ export function TripsListClient({
         row.id === trip.id
           ? {
               ...row,
-              visibility: payload.trip?.visibility ?? next,
+              visibility: payload.trip?.visibility ?? visibility,
             }
           : row,
       ),
@@ -148,8 +150,8 @@ export function TripsListClient({
 
       <div className="grid gap-4 sm:grid-cols-2">
         {trips.map((trip) => {
-          const isPublic = trip.visibility === "PUBLIC";
-          const checkboxId = `trip-public-${trip.id}`;
+          const visibility = trip.visibility === "PUBLIC" ? "PUBLIC" : "PRIVATE";
+          const groupName = `trip-visibility-${trip.id}`;
           return (
             <Card
               key={trip.id}
@@ -181,24 +183,37 @@ export function TripsListClient({
                   </p>
                 </div>
                 {trip.status !== "ARCHIVED" ? (
-                  <label
-                    htmlFor={checkboxId}
-                    className="text-foreground flex cursor-pointer items-center gap-2"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <input
-                      id={checkboxId}
-                      type="checkbox"
-                      className="border-input size-4 rounded"
-                      checked={isPublic}
-                      disabled={togglingId === trip.id}
-                      onChange={() => void toggleVisibility(trip)}
-                      onClick={(event) => event.stopPropagation()}
-                    />
-                    <span>Herkese açık (Keşfet)</span>
-                  </label>
+                  <fieldset className="space-y-2" disabled={togglingId === trip.id}>
+                    <legend className="text-foreground text-sm font-medium">
+                      Görünürlük
+                    </legend>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-foreground flex cursor-pointer items-center gap-2">
+                        <input
+                          type="radio"
+                          name={groupName}
+                          value="PRIVATE"
+                          checked={visibility === "PRIVATE"}
+                          onChange={() => void setVisibility(trip, "PRIVATE")}
+                          className="size-4"
+                        />
+                        <span>Özel</span>
+                      </label>
+                      <label className="text-foreground flex cursor-pointer items-center gap-2">
+                        <input
+                          type="radio"
+                          name={groupName}
+                          value="PUBLIC"
+                          checked={visibility === "PUBLIC"}
+                          onChange={() => void setVisibility(trip, "PUBLIC")}
+                          className="size-4"
+                        />
+                        <span>Herkese açık (Keşfet)</span>
+                      </label>
+                    </div>
+                  </fieldset>
                 ) : (
-                  <p>{isPublic ? "Herkese açıktı" : "Özeldi"}</p>
+                  <p>{visibility === "PUBLIC" ? "Herkese açıktı" : "Özeldi"}</p>
                 )}
               </CardContent>
             </Card>

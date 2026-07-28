@@ -35,6 +35,7 @@ const EMAIL = "little.prince@roavo.demo";
 const PASSWORD = "prince1234";
 const USERNAME = "littleprince";
 const DISPLAY_NAME = "Little Prince";
+const TRIP_TITLE = "Dünyada bir gün";
 
 const ARGON2_OPTIONS = {
   memoryCost: 65536,
@@ -73,6 +74,7 @@ async function main() {
           passwordHash,
           status: "ACTIVE",
           deletedAt: null,
+          travelerScoreMinor: 80,
         },
       });
       if (existing.profile) {
@@ -111,124 +113,212 @@ async function main() {
       console.log("Created user:", EMAIL);
     }
 
-    const startDate = utcDate(2026, 9, 12);
-    const endDate = utcDate(2026, 9, 14);
-
-    const existingTrip = await prisma.trip.findFirst({
+    // Soft-delete old demo trips so Keşfet only shows the new story.
+    await prisma.trip.updateMany({
       where: {
         ownerId: userId,
-        title: "Kapadokya’da üç gün",
         deletedAt: null,
+        title: { not: TRIP_TITLE },
       },
+      data: { deletedAt: new Date(), visibility: "PRIVATE" },
     });
 
-    if (existingTrip) {
-      await prisma.trip.update({
-        where: { id: existingTrip.id },
-        data: {
-          visibility: "PUBLIC",
-          status: "DRAFT",
-          deletedAt: null,
-        },
+    const startDate = utcDate(2026, 8, 1);
+    const midDate = utcDate(2026, 8, 2);
+    const endDate = utcDate(2026, 8, 3);
+
+    let trip = await prisma.trip.findFirst({
+      where: {
+        ownerId: userId,
+        title: TRIP_TITLE,
+        deletedAt: null,
+      },
+      include: { days: true },
+    });
+
+    if (trip) {
+      await prisma.itineraryItem.deleteMany({
+        where: { tripDay: { tripId: trip.id } },
       });
-      console.log("Public trip already exists:", existingTrip.id);
-    } else {
-      const trip = await prisma.trip.create({
+      await prisma.tripDay.deleteMany({ where: { tripId: trip.id } });
+      await prisma.tripComment.deleteMany({ where: { tripId: trip.id } });
+      trip = await prisma.trip.update({
+        where: { id: trip.id },
         data: {
-          ownerId: userId,
-          title: "Kapadokya’da üç gün",
           description:
-            "Balonlar, peri bacaları ve yavaş bir keşif. Little Prince’in not defterinden.",
+            "Üç gün, üç kıta, üç gün batımı. Aynı gökyüzünü farklı ufuklardan izlemek için küçük bir rota.",
           status: "DRAFT",
           visibility: "PUBLIC",
-          originName: "İstanbul",
-          originCountryCode: "TR",
-          destinationName: "Kapadokya",
-          destinationCountryCode: "TR",
-          destinationRegionNameSnapshot: "İç Anadolu",
+          originName: "Tokyo",
+          originCountryCode: "JP",
+          destinationName: "Dünya",
+          destinationCountryCode: null,
+          destinationRegionNameSnapshot: "Tokyo · Santorini · Havana",
           destinationSource: "MANUAL",
           startDate,
           endDate,
           travelerCount: 1,
-          currencyCode: "TRY",
+          currencyCode: "USD",
           travelPace: "RELAXED",
-          interests: ["HISTORY", "NATURE", "PHOTOGRAPHY"],
-          days: {
-            create: [
-              {
-                date: startDate,
-                title: "Göreme ve peri bacaları",
-                notes: "Sabah yavaş başla; öğleden sonra vadide yürüyüş.",
-                position: 0,
-                items: {
-                  create: [
-                    {
-                      type: "NOTE",
-                      title: "O gün neler yaptım",
-                      description:
-                        "Göreme açık hava müzesini gez, sonra Love Valley’e doğru kısa bir yürüyüş yap. Akşam Günbatımı Noktası’nda çay iç.",
-                      position: 0,
-                      source: "MANUAL",
-                    },
-                    {
-                      type: "ATTRACTION",
-                      title: "Göreme Açık Hava Müzesi",
-                      description: "Kayaya oyulmuş kiliseler ve freskler.",
-                      locationName: "Göreme",
-                      position: 1,
-                      source: "MANUAL",
-                    },
-                  ],
-                },
-              },
-              {
-                date: utcDate(2026, 9, 13),
-                title: "Uçhisar ve yeraltı",
-                notes: "Kale manzarası + yeraltı şehri.",
-                position: 1,
-                items: {
-                  create: [
-                    {
-                      type: "NOTE",
-                      title: "O gün neler yaptım",
-                      description:
-                        "Sabah Uçhisar Kalesi’ne çık. Öğleden sonra Kaymaklı veya Derinkuyu yeraltı şehrini gez. Akşam Avanos’ta seramik atölyesine uğra.",
-                      position: 0,
-                      source: "MANUAL",
-                    },
-                  ],
-                },
-              },
-              {
-                date: endDate,
-                title: "Balon sabahı ve vedalar",
-                notes: "Erken kalk; gökyüzünü izle.",
-                position: 2,
-                items: {
-                  create: [
-                    {
-                      type: "NOTE",
-                      title: "O gün neler yaptım",
-                      description:
-                        "Şafakta balonları izle (uçmasan da manzara yeter). Öğleden sonra Paşabağ’da kısa bir tur atıp İstanbul’a dön.",
-                      position: 0,
-                      source: "MANUAL",
-                    },
-                  ],
-                },
-              },
-            ],
-          },
+          interests: ["NATURE", "PHOTOGRAPHY", "CULTURE"],
+          likeCount: 0,
+          commentCount: 0,
         },
+        include: { days: true },
       });
-      console.log("Created public trip:", trip.id);
+      console.log("Reset existing trip:", trip.id);
+    } else {
+      trip = await prisma.trip.create({
+        data: {
+          ownerId: userId,
+          title: TRIP_TITLE,
+          description:
+            "Üç gün, üç kıta, üç gün batımı. Aynı gökyüzünü farklı ufuklardan izlemek için küçük bir rota.",
+          status: "DRAFT",
+          visibility: "PUBLIC",
+          originName: "Tokyo",
+          originCountryCode: "JP",
+          destinationName: "Dünya",
+          destinationRegionNameSnapshot: "Tokyo · Santorini · Havana",
+          destinationSource: "MANUAL",
+          startDate,
+          endDate,
+          travelerCount: 1,
+          currencyCode: "USD",
+          travelPace: "RELAXED",
+          interests: ["NATURE", "PHOTOGRAPHY", "CULTURE"],
+        },
+        include: { days: true },
+      });
+      console.log("Created trip:", trip.id);
+    }
+
+    await prisma.tripDay.create({
+      data: {
+        tripId: trip.id,
+        date: startDate,
+        title: "Tokyo — Shibuya gün batımı",
+        notes: "Şehrin neonları yanmadan önce gökyüzü turuncuya döner.",
+        position: 0,
+        items: {
+          create: [
+            {
+              type: "NOTE",
+              title: "O gün neler yaptım",
+              description:
+                "Öğleden sonra Yoyogi Park’ta yürüdüm. Akşamüstü Shibuya Sky’a çıktım ve gün batımını tüm şehrin üzerinde izledim. Küçük prens dese ki: ‘Işıklar yanmadan önce dünya daha yumuşak.’",
+              position: 0,
+              source: "MANUAL",
+            },
+            {
+              type: "ATTRACTION",
+              title: "Shibuya Sky gün batımı",
+              description: "Tokyo’nun üzerinde yavaş yavaş kararan bir ufuk.",
+              locationName: "Shibuya, Tokyo",
+              position: 1,
+              source: "MANUAL",
+            },
+          ],
+        },
+      },
+    });
+
+    await prisma.tripDay.create({
+      data: {
+        tripId: trip.id,
+        date: midDate,
+        title: "Santorini — Oia’nın kırmızı ufku",
+        notes: "Beyaz duvarlar, mavi kubbeler, yavaş bir akşam.",
+        position: 1,
+        items: {
+          create: [
+            {
+              type: "NOTE",
+              title: "O gün neler yaptım",
+              description:
+                "Sabah Fira’dan Oia’ya yürüdüm. Akşam kalabalığa karışmadan bir terasta oturdum; Ege’nin üstünde gün batımı neredeyse bir saat sürdü. Hiçbir şey yapmadan izlemek bile planın kendisiydi.",
+              position: 0,
+              source: "MANUAL",
+            },
+            {
+              type: "ATTRACTION",
+              title: "Oia gün batımı",
+              description: "Klasik ama her seferinde yeni hissettiren bir ışık.",
+              locationName: "Oia, Santorini",
+              position: 1,
+              source: "MANUAL",
+            },
+          ],
+        },
+      },
+    });
+
+    await prisma.tripDay.create({
+      data: {
+        tripId: trip.id,
+        date: endDate,
+        title: "Havana — Malecón’da veda",
+        notes: "Müzik, tuzlu rüzgâr, kararan Karayipler.",
+        position: 2,
+        items: {
+          create: [
+            {
+              type: "NOTE",
+              title: "O gün neler yaptım",
+              description:
+                "Öğleden sonra eski şehirde dolaştım. Akşam Malecón’a oturdum; dalgalar duvara çarparken güneş denize indi. Üçüncü gün batımı, aynı soruyu sordurdu: belki dünya tek bir gündür, sadece farklı balkonlardan bakıyoruz.",
+              position: 0,
+              source: "MANUAL",
+            },
+            {
+              type: "ATTRACTION",
+              title: "Malecón gün batımı",
+              description: "Havana’nın sahil yolunda yavaş bir kapanış.",
+              locationName: "Malecón, Havana",
+              position: 1,
+              source: "MANUAL",
+            },
+          ],
+        },
+      },
+    });
+
+    // Seed a couple of demo comments from another user if present.
+    const other = await prisma.user.findFirst({
+      where: {
+        emailNormalized: { not: emailNormalized },
+        status: "ACTIVE",
+        deletedAt: null,
+      },
+      orderBy: { createdAt: "asc" },
+    });
+    if (other) {
+      await prisma.tripComment.createMany({
+        data: [
+          {
+            tripId: trip.id,
+            userId: other.id,
+            body: "Santorini gün batımı sahnesi çok iyi anlatılmış. Ben de Oia’da aynı terasta oturmuştum.",
+          },
+          {
+            tripId: trip.id,
+            userId: other.id,
+            body: "Tokyo → Havana arası aynı gökyüzü fikri güzel. Malecón notunu kaydettim.",
+          },
+        ],
+      });
+      await prisma.trip.update({
+        where: { id: trip.id },
+        data: { commentCount: 2 },
+      });
+      console.log("Seeded 2 comments from", other.email);
     }
 
     console.log("\nLogin:");
     console.log(`  email:    ${EMAIL}`);
     console.log(`  password: ${PASSWORD}`);
     console.log(`  name:     ${DISPLAY_NAME}`);
-    console.log("Keşfet’te “Kapadokya’da üç gün” görünmeli.");
+    console.log(`Keşfet’te “${TRIP_TITLE}” görünmeli.`);
   } finally {
     await prisma.$disconnect();
   }

@@ -157,6 +157,7 @@ export async function listExploreTrips(input: {
       deletedAt: null,
       status: "DRAFT",
       visibility: "PUBLIC",
+      ...(input.viewerId ? { ownerId: { not: input.viewerId } } : {}),
     },
     include: {
       owner: {
@@ -180,6 +181,24 @@ export async function listExploreTrips(input: {
             take: 1,
           }
         : false,
+      comments: {
+        where: { deletedAt: null },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        take: 3,
+        include: {
+          user: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  username: true,
+                  displayName: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
     orderBy: [{ likeCount: "desc" }, { updatedAt: "desc" }],
     take: 80,
@@ -217,13 +236,25 @@ export async function listExploreTrips(input: {
       return {
         id: trip.id,
         title: trip.title,
+        description: trip.description,
         destinationName: trip.destinationName,
+        destinationRegion: trip.destinationRegionNameSnapshot,
         startDate: formatDateOnly(trip.startDate),
         endDate: formatDateOnly(trip.endDate),
         dayCount: trip._count.days,
         likeCount: trip.likeCount,
         commentCount: trip.commentCount,
         likedByViewer,
+        recentComments: trip.comments.map((comment) => ({
+          id: comment.id,
+          body: comment.body,
+          createdAt: comment.createdAt.toISOString(),
+          author: {
+            id: comment.user.id,
+            username: comment.user.profile?.username ?? "gezgin",
+            displayName: comment.user.profile?.displayName ?? "Gezgin",
+          },
+        })),
         owner: {
           id: trip.owner.id,
           username: trip.owner.profile?.username ?? "gezgin",

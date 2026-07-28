@@ -149,7 +149,7 @@ export function TripCommentsSection({
   }
 
   return (
-    <Card>
+    <Card id="comments">
       <CardHeader>
         <CardTitle>Yorumlar</CardTitle>
         <CardDescription>{commentCount} yorum</CardDescription>
