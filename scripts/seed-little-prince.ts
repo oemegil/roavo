@@ -75,6 +75,7 @@ async function main() {
           status: "ACTIVE",
           deletedAt: null,
           travelerScoreMinor: 80,
+          accountVisibility: "PUBLIC",
         },
       });
       if (existing.profile) {
@@ -98,6 +99,7 @@ async function main() {
           status: "ACTIVE",
           role: "USER",
           travelerScoreMinor: 80,
+          accountVisibility: "PUBLIC",
           profile: {
             create: {
               username: USERNAME,

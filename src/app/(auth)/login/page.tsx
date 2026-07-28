@@ -12,7 +12,7 @@ export default function LoginPage() {
   return (
     <AuthPageShell
       title="Tekrar hoş geldin"
-      description="Seyahat planlamaya devam etmek için giriş yap."
+      description="Planına, gezilerine ve Keşfet’e devam et."
     >
       <Suspense fallback={<Skeleton className="h-64 w-full" />}>
         <LoginForm />

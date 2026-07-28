@@ -9,7 +9,7 @@ export default function RegisterPage() {
   return (
     <AuthPageShell
       title="Roavo'ya katıl"
-      description="Trip'lerini kaydetmek ve planlarını kişiselleştirmek için hesap oluştur."
+      description="Planlarını kaydet, yaşadığın gezileri tut, Keşfet’te paylaş."
     >
       <RegisterForm />
     </AuthPageShell>

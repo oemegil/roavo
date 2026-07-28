@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import type { FlightOptionDto } from "@/integrations/flights/types";
 import { PLAN_CATEGORY_OPTIONS } from "@/features/plan/categories";
@@ -9,6 +9,7 @@ import { PlanLoadingMessages } from "@/features/plan/components/plan-loading-mes
 import { TurkishDateRangeField } from "@/features/plan/components/turkish-date-field";
 import { ShowOnMapButton } from "@/features/maps/components/show-on-map-button";
 import type { TravelInterest } from "@/server/domain/trips/constants";
+import { ROAVO_BRAND } from "@/lib/brand";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,22 +40,27 @@ type Mode = "tickets" | "plan" | "manual";
 
 const TABS: Array<{ id: Mode; label: string; description: string }> = [
   {
-    id: "tickets",
-    label: "Bilet",
-    description: "Tarih ve kalkışa göre uçuş fiyatlarını karşılaştır.",
-  },
-  {
     id: "plan",
     label: "Planla",
-    description: "Şehir ve tercihlerini seç, günlük programı oluştur.",
+    description: "Şehir ve tercihlerini seç, AI ile günlük program oluştur.",
   },
   {
     id: "manual",
     label: "Gezi ekle",
-    description: "Daha önce yaptığın bir gezinin kaydını tut.",
+    description:
+      "Yaptığın bir gezinin kaydını tut; yerleri sonra haritaya ekleyebilirsin.",
+  },
+  {
+    id: "tickets",
+    label: "Bilet",
+    description: "İsteğe bağlı: uçuş fiyatlarına bak, beğendiğini planlamaya taşı.",
   },
 ];
 
+function parsePlanTab(value: string | null): Mode | null {
+  if (value === "plan" || value === "manual" || value === "tickets") return value;
+  return null;
+}
 function formatFlightClock(value: string | null) {
   if (!value) return null;
   const match = value.match(/T(\d{2}:\d{2})/) ?? value.match(/^(\d{2}:\d{2})/);
@@ -95,7 +101,8 @@ function formatLegLine(label: string, leg: FlightOptionDto["outbound"]) {
 
 export function TripPlanWizard() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>("plan");
+  const searchParams = useSearchParams();
+  const mode = parsePlanTab(searchParams.get("tab")) ?? "plan";
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errorDebug, setErrorDebug] = useState<string | null>(null);
@@ -315,7 +322,14 @@ export function TripPlanWizard() {
       resetFeedback();
     }
 
-    setMode(next);
+    const params = new URLSearchParams(searchParams.toString());
+    if (next === "plan") {
+      params.delete("tab");
+    } else {
+      params.set("tab", next);
+    }
+    const query = params.toString();
+    router.replace(query ? `/plan?${query}` : "/plan", { scroll: false });
   }
 
   function resetFeedback() {
@@ -345,7 +359,7 @@ export function TripPlanWizard() {
     setCreatedTripId(null);
     setError(null);
     setErrorDebug(null);
-    setMode("plan");
+    router.replace("/plan", { scroll: false });
     requestAnimationFrame(() => {
       document
         .getElementById("plan-preferences")
@@ -619,10 +633,13 @@ export function TripPlanWizard() {
   return (
     <section className="space-y-6">
       <div className="space-y-4">
-        <div className="space-y-1">
-          <h1 className="text-heading">Seyahat</h1>
+        <div className="space-y-2">
+          <h1 className="text-heading">Planla</h1>
+          <p className="font-display text-base font-semibold tracking-tight">
+            {ROAVO_BRAND.signature}
+          </p>
           <p className="text-muted-foreground text-sm">
-            {TABS.find((tab) => tab.id === mode)?.description}
+            {ROAVO_BRAND.promise} {TABS.find((tab) => tab.id === mode)?.description}
           </p>
         </div>
 

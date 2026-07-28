@@ -2,11 +2,28 @@ import { z } from "zod";
 
 export const tripVisibilitySchema = z.enum(["PRIVATE", "PUBLIC"]);
 
+export const accountVisibilitySchema = z.enum(["PRIVATE", "PUBLIC"]);
+
 export const setTripVisibilitySchema = z.object({
   visibility: tripVisibilitySchema,
 });
 
+export const setAccountVisibilitySchema = z.object({
+  visibility: accountVisibilitySchema,
+});
+
 export const exploreListQuerySchema = z.object({
+  cursor: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(50).optional(),
+  feed: z.enum(["public", "following"]).optional(),
+});
+
+export const travelerSearchQuerySchema = z.object({
+  q: z.string().trim().min(2).max(60),
+  limit: z.coerce.number().int().min(1).max(30).optional(),
+});
+
+export const followListQuerySchema = z.object({
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(50).optional(),
 });
@@ -28,4 +45,5 @@ export const listTripCommentsQuerySchema = z.object({
 });
 
 export type SetTripVisibilityInput = z.infer<typeof setTripVisibilitySchema>;
+export type SetAccountVisibilityInput = z.infer<typeof setAccountVisibilitySchema>;
 export type CreateTripCommentInput = z.infer<typeof createTripCommentSchema>;

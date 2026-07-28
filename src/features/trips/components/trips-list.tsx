@@ -6,6 +6,7 @@ import { Heart, MessageCircle } from "lucide-react";
 
 import { TripCommentsSection } from "@/features/traveler/components/trip-comments";
 import type { TripSummaryDto } from "@/features/trips/dto";
+import { ROAVO_BRAND } from "@/lib/brand";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -91,17 +92,14 @@ export function TripsListClient({
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-heading">Gezilerin</h1>
-          <p className="text-muted-foreground text-body">
-            Yeni geziler özel başlar. Keşfet’te paylaşınca beğeni ve yorumları burada
-            görürsün.
-          </p>
-        </div>
-        <Button asChild className="w-full sm:w-auto">
-          <Link href="/plan">Yeni gezi</Link>
-        </Button>
+      <div className="space-y-2">
+        <h1 className="text-heading">Gezilerin</h1>
+        <p className="text-muted-foreground text-sm tracking-wide">
+          {ROAVO_BRAND.identity}
+        </p>
+        <p className="text-muted-foreground text-body">
+          Kayıtlı planların burada. Yeni plan için alt menüden Planla’ya geç.
+        </p>
       </div>
 
       <div className="flex gap-2">
@@ -143,14 +141,17 @@ export function TripsListClient({
             </CardTitle>
             <CardDescription>
               {status === "DRAFT"
-                ? "İlk gezini oluştur ve gün gün planını kur."
+                ? "Planla’dan AI programı oluştur veya yaptığın bir gezinin kaydını ekle."
                 : "Arşivlenen geziler burada görünür."}
             </CardDescription>
           </CardHeader>
           {status === "DRAFT" ? (
-            <CardContent>
+            <CardContent className="flex flex-col gap-2 sm:flex-row">
               <Button asChild>
-                <Link href="/plan">İlk gezini oluştur</Link>
+                <Link href="/plan">AI ile planla</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/plan?tab=manual">Gezi kaydı ekle</Link>
               </Button>
             </CardContent>
           ) : null}

@@ -6,22 +6,43 @@ import {
 } from "@/features/traveler/schemas";
 import { AppError } from "@/lib/errors";
 import { prisma } from "@/server/infrastructure/database";
+import { resolveAccountAccess } from "@/server/domain/traveler/visibility";
 
 function startOfUtcDay(date = new Date()): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-async function requirePublicTrip(tripId: string) {
+async function requireVisiblePublicTrip(input: {
+  tripId: string;
+  viewerId?: string | null;
+}) {
   const trip = await prisma.trip.findFirst({
     where: {
-      id: tripId,
+      id: input.tripId,
       deletedAt: null,
       status: "DRAFT",
       visibility: "PUBLIC",
     },
-    select: { id: true, ownerId: true, commentCount: true },
+    select: {
+      id: true,
+      ownerId: true,
+      commentCount: true,
+      owner: { select: { accountVisibility: true } },
+    },
   });
   if (!trip) {
+    throw new AppError({
+      code: "NOT_FOUND",
+      message: "Public gezi bulunamadı.",
+      status: 404,
+    });
+  }
+  const access = await resolveAccountAccess({
+    viewerId: input.viewerId,
+    ownerId: trip.ownerId,
+    accountVisibility: trip.owner.accountVisibility,
+  });
+  if (!access.canViewContent) {
     throw new AppError({
       code: "NOT_FOUND",
       message: "Public gezi bulunamadı.",
@@ -86,7 +107,10 @@ export async function listTripComments(input: {
   cursor?: string;
   limit?: number;
 }) {
-  const trip = await requirePublicTrip(input.tripId);
+  const trip = await requireVisiblePublicTrip({
+    tripId: input.tripId,
+    viewerId: input.viewerId,
+  });
   const limit = Math.min(input.limit ?? 20, 50);
 
   let cursorFilter: { createdAt: Date; id: string } | null = null;
@@ -139,7 +163,10 @@ export async function createTripComment(input: {
   tripId: string;
   data: CreateTripCommentInput;
 }) {
-  const trip = await requirePublicTrip(input.tripId);
+  const trip = await requireVisiblePublicTrip({
+    tripId: input.tripId,
+    viewerId: input.userId,
+  });
   const body = input.data.body.trim();
   if (!body) {
     throw new AppError({
@@ -195,7 +222,10 @@ export async function deleteTripComment(input: {
   tripId: string;
   commentId: string;
 }) {
-  const trip = await requirePublicTrip(input.tripId);
+  const trip = await requireVisiblePublicTrip({
+    tripId: input.tripId,
+    viewerId: input.userId,
+  });
   const comment = await prisma.tripComment.findFirst({
     where: {
       id: input.commentId,

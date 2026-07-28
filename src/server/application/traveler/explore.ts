@@ -9,6 +9,7 @@ import {
   primaryBadgeForScore,
 } from "@/server/domain/traveler/score";
 import { formatDateOnly } from "@/server/domain/trips/date-only";
+import { resolveAccountAccess } from "@/server/domain/traveler/visibility";
 
 export async function likePublicTrip(input: {
   userId: string;
@@ -22,7 +23,11 @@ export async function likePublicTrip(input: {
       status: "DRAFT",
       visibility: "PUBLIC",
     },
-    select: { id: true, ownerId: true },
+    select: {
+      id: true,
+      ownerId: true,
+      owner: { select: { accountVisibility: true } },
+    },
   });
   if (!trip) {
     throw new AppError({
@@ -36,6 +41,19 @@ export async function likePublicTrip(input: {
       code: "VALIDATION_ERROR",
       message: "Kendi gezini beğenemezsin.",
       status: 400,
+    });
+  }
+
+  const access = await resolveAccountAccess({
+    viewerId: input.userId,
+    ownerId: trip.ownerId,
+    accountVisibility: trip.owner.accountVisibility,
+  });
+  if (!access.canViewContent) {
+    throw new AppError({
+      code: "NOT_FOUND",
+      message: "Public gezi bulunamadı.",
+      status: 404,
     });
   }
 
@@ -148,22 +166,59 @@ export async function setTripVisibility(input: {
 
 export async function listExploreTrips(input: {
   viewerId?: string | null;
+  feed?: "public" | "following";
   limit?: number;
   cursor?: string;
 }) {
   const limit = Math.min(input.limit ?? 20, 50);
+  const feed = input.feed ?? "public";
+
+  if (feed === "following") {
+    if (!input.viewerId) {
+      throw new AppError({
+        code: "UNAUTHORIZED",
+        message: "Following feed için giriş gerekli.",
+        status: 401,
+      });
+    }
+  }
+
+  const followingOwnerIds =
+    feed === "following" && input.viewerId
+      ? (
+          await prisma.userFollow.findMany({
+            where: { followerId: input.viewerId, status: "ACTIVE" },
+            select: { followingId: true },
+          })
+        ).map((row) => row.followingId)
+      : [];
+
+  if (feed === "following" && followingOwnerIds.length === 0) {
+    return { trips: [], nextCursor: null };
+  }
+
   const trips = await prisma.trip.findMany({
     where: {
       deletedAt: null,
       status: "DRAFT",
       visibility: "PUBLIC",
-      ...(input.viewerId ? { ownerId: { not: input.viewerId } } : {}),
+      ...(feed === "following"
+        ? { ownerId: { in: followingOwnerIds } }
+        : {
+            ...(input.viewerId ? { ownerId: { not: input.viewerId } } : {}),
+            owner: {
+              accountVisibility: "PUBLIC",
+              status: "ACTIVE",
+              deletedAt: null,
+            },
+          }),
     },
     include: {
       owner: {
         select: {
           id: true,
           travelerScoreMinor: true,
+          accountVisibility: true,
           profile: {
             select: {
               username: true,
@@ -262,6 +317,7 @@ export async function listExploreTrips(input: {
           avatarUrl: trip.owner.profile?.avatarUrl ?? null,
           travelerScore: scorePoints,
           badge: primaryBadgeForScore(scorePoints),
+          accountVisibility: trip.owner.accountVisibility,
         },
         updatedAt: trip.updatedAt.toISOString(),
       };
@@ -286,6 +342,7 @@ export async function getPublicTripDetail(input: {
         select: {
           id: true,
           travelerScoreMinor: true,
+          accountVisibility: true,
           profile: {
             select: {
               username: true,
@@ -315,6 +372,19 @@ export async function getPublicTripDetail(input: {
   });
 
   if (!trip) {
+    throw new AppError({
+      code: "NOT_FOUND",
+      message: "Public gezi bulunamadı.",
+      status: 404,
+    });
+  }
+
+  const access = await resolveAccountAccess({
+    viewerId: input.viewerId,
+    ownerId: trip.owner.id,
+    accountVisibility: trip.owner.accountVisibility,
+  });
+  if (!access.canViewContent) {
     throw new AppError({
       code: "NOT_FOUND",
       message: "Public gezi bulunamadı.",
@@ -368,6 +438,7 @@ export async function getTravelerProfileSummary(userId: string) {
     where: { id: userId },
     select: {
       travelerScoreMinor: true,
+      accountVisibility: true,
       profile: {
         select: {
           username: true,
@@ -379,6 +450,8 @@ export async function getTravelerProfileSummary(userId: string) {
       _count: {
         select: {
           trips: { where: { deletedAt: null, visibility: "PUBLIC" } },
+          followers: { where: { status: "ACTIVE" } },
+          following: { where: { status: "ACTIVE" } },
         },
       },
     },
@@ -391,14 +464,21 @@ export async function getTravelerProfileSummary(userId: string) {
     });
   }
   const score = pointsFromMinor(user.travelerScoreMinor);
+  const pendingFollowRequestCount = await prisma.userFollow.count({
+    where: { followingId: userId, status: "PENDING" },
+  });
   return {
     username: user.profile?.username ?? "gezgin",
     displayName: user.profile?.displayName ?? "Gezgin",
     avatarUrl: user.profile?.avatarUrl ?? null,
     bio: user.profile?.bio ?? null,
+    accountVisibility: user.accountVisibility,
     travelerScore: score,
     travelerScoreMinor: user.travelerScoreMinor,
     badge: primaryBadgeForScore(score),
     publicTripCount: user._count.trips,
+    followerCount: user._count.followers,
+    followingCount: user._count.following,
+    pendingFollowRequestCount,
   };
 }

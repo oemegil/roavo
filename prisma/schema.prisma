@@ -32,6 +32,17 @@ enum TripVisibility {
   FRIENDS
 }
 
+/** Account-level discoverability (who can see your public trips / profile content). */
+enum AccountVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum FollowStatus {
+  PENDING
+  ACTIVE
+}
+
 enum TravelerScoreAction {
   FLIGHT_SEARCH
   PLAN_PREVIEW
@@ -127,6 +138,8 @@ model User {
   tokenVersion       Int        @default(0)
   /** Traveler score in minor units (0.5 point = 5). */
   travelerScoreMinor Int        @default(0)
+  /** Who may discover this account's public trips outside an approved follow. */
+  accountVisibility  AccountVisibility @default(PRIVATE)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   deletedAt          DateTime?
@@ -141,10 +154,30 @@ model User {
   aiOperations               AiOperation[]
   destinationRecommendations DestinationRecommendation[]
   aiPreviews                 AiPreview[]
+  following                  UserFollow[] @relation("UserFollowing")
+  followers                  UserFollow[] @relation("UserFollowers")
 
   @@index([status])
   @@index([travelerScoreMinor])
+  @@index([accountVisibility])
   @@map("users")
+}
+
+model UserFollow {
+  id          String       @id @default(cuid())
+  followerId  String
+  followingId String
+  status      FollowStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  follower  User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId, status, createdAt])
+  @@index([followerId, status, createdAt])
+  @@map("user_follows")
 }
 
 model UserProfile {

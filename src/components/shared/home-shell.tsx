@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ROAVO_BRAND } from "@/lib/brand";
 
 export function HomeShell() {
   return (
@@ -19,22 +20,22 @@ export function HomeShell() {
 
       <main className="relative mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-8 px-6 py-16 sm:max-w-xl sm:px-8">
         <div className="space-y-4">
-          <p className="text-caption uppercase tracking-[0.2em]">Roavo</p>
-          <h1 className="text-display text-foreground">Roavo</h1>
-          <p className="text-subheading text-muted-foreground">
-            Bu seyahati Roavo&apos;layalım.
-          </p>
+          <p className="text-caption tracking-[0.2em] uppercase">{ROAVO_BRAND.name}</p>
+          <h1 className="text-display text-foreground">{ROAVO_BRAND.name}</h1>
+          <p className="text-subheading text-foreground">{ROAVO_BRAND.signature}</p>
           <p className="text-body text-muted-foreground max-w-md">
-            Tarih aralığını seç, gideceğin yeri belirle — yapay zeka sana özel günlük
-            programı oluştursun.
+            {ROAVO_BRAND.promise}
+          </p>
+          <p className="text-muted-foreground max-w-md text-sm tracking-wide">
+            {ROAVO_BRAND.identity}
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Hemen planla</CardTitle>
+            <CardTitle>Hemen başla</CardTitle>
             <CardDescription>
-              Giriş yap veya ücretsiz hesap oluşturarak gezi planına başla.
+              Giriş yap veya ücretsiz hesap oluştur; planını kur, yaşa ve paylaş.
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex flex-col gap-3 sm:flex-row">

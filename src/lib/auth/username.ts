@@ -15,6 +15,7 @@ export const RESERVED_USERNAMES = new Set([
   "system",
   "trips",
   "explore",
+  "u",
   "roavo",
   "www",
   "me",
@@ -30,8 +31,7 @@ export function normalizeUsername(username: string): string {
 }
 
 export type UsernameValidationResult =
-  | { ok: true; normalized: string }
-  | { ok: false; message: string };
+  { ok: true; normalized: string } | { ok: false; message: string };
 
 export function validateUsername(username: string): UsernameValidationResult {
   const normalized = normalizeUsername(username);
@@ -46,7 +46,8 @@ export function validateUsername(username: string): UsernameValidationResult {
   if (!USERNAME_PATTERN.test(normalized)) {
     return {
       ok: false,
-      message: "Username may only contain lowercase letters, numbers, periods, and underscores.",
+      message:
+        "Username may only contain lowercase letters, numbers, periods, and underscores.",
     };
   }
 

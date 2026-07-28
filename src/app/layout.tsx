@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
 
 import { AppProviders } from "@/components/providers/app-providers";
+import { ROAVO_BRAND } from "@/lib/brand";
 
 import "./globals.css";
 
@@ -20,12 +21,11 @@ const display = Fraunces({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Roavo — AI Seyahat Planlama",
-    template: "%s · Roavo",
+    default: `${ROAVO_BRAND.name} — ${ROAVO_BRAND.promise}`,
+    template: `%s · ${ROAVO_BRAND.name}`,
   },
-  description:
-    "Nereye gideceğini keşfet ve yapay zeka ile kişiselleştirilmiş seyahat planları oluştur.",
-  applicationName: "Roavo",
+  description: `${ROAVO_BRAND.signature} ${ROAVO_BRAND.promise}`,
+  applicationName: ROAVO_BRAND.name,
 };
 
 export const viewport: Viewport = {

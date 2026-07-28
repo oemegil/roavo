@@ -60,7 +60,9 @@ export const authConfig = {
         pathname.startsWith("/profile") ||
         pathname.startsWith("/settings") ||
         pathname.startsWith("/destinations") ||
-        pathname.startsWith("/plan");
+        pathname.startsWith("/plan") ||
+        pathname.startsWith("/explore") ||
+        pathname.startsWith("/u");
 
       if (isLoggedIn && isAuthPage) {
         return Response.redirect(

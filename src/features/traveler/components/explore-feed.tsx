@@ -46,6 +46,16 @@ type ExploreTrip = {
   updatedAt: string;
 };
 
+type SearchHit = {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarUrl: string | null;
+  travelerScore: number;
+  badge: { id: string; label: string };
+  accountVisibility: "PRIVATE" | "PUBLIC";
+};
+
 function AvatarBubble({ name, avatarUrl }: { name: string; avatarUrl: string | null }) {
   if (avatarUrl) {
     return (
@@ -64,6 +74,7 @@ function AvatarBubble({ name, avatarUrl }: { name: string; avatarUrl: string | n
 }
 
 export function ExploreFeedClient() {
+  const [feed, setFeed] = useState<"public" | "following">("public");
   const [trips, setTrips] = useState<ExploreTrip[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,18 +83,23 @@ export function ExploreFeedClient() {
   const [likingId, setLikingId] = useState<string | null>(null);
   const [draftByTrip, setDraftByTrip] = useState<Record<string, string>>({});
   const [postingId, setPostingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchHits, setSearchHits] = useState<SearchHit[]>([]);
+  const [searching, setSearching] = useState(false);
 
-  const load = useCallback(async (cursor?: string) => {
-    const url = cursor
-      ? `/api/v1/explore?cursor=${encodeURIComponent(cursor)}`
-      : "/api/v1/explore";
-    const response = await fetch(url);
-    const payload = await response.json().catch(() => null);
-    if (!response.ok) {
-      throw new Error(payload?.error?.message ?? "Keşfet yüklenemedi.");
-    }
-    return payload as { trips: ExploreTrip[]; nextCursor: string | null };
-  }, []);
+  const load = useCallback(
+    async (cursor?: string) => {
+      const params = new URLSearchParams({ feed });
+      if (cursor) params.set("cursor", cursor);
+      const response = await fetch(`/api/v1/explore?${params.toString()}`);
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message ?? "Keşfet yüklenemedi.");
+      }
+      return payload as { trips: ExploreTrip[]; nextCursor: string | null };
+    },
+    [feed],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -109,6 +125,35 @@ export function ExploreFeedClient() {
       cancelled = true;
     };
   }, [load]);
+
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (q.length < 2) {
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      void (async () => {
+        setSearching(true);
+        const response = await fetch(
+          `/api/v1/travelers/search?q=${encodeURIComponent(q)}`,
+        );
+        const payload = await response.json().catch(() => null);
+        if (cancelled) return;
+        setSearching(false);
+        if (response.ok) {
+          setSearchHits(payload.travelers ?? []);
+        }
+      })();
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  const activeSearch = searchQuery.trim().length >= 2;
+  const visibleSearchHits = activeSearch ? searchHits : [];
 
   async function loadMore() {
     if (!nextCursor) return;
@@ -192,6 +237,70 @@ export function ExploreFeedClient() {
         </p>
       </div>
 
+      <div className="space-y-2">
+        <label className="sr-only" htmlFor="traveler-search">
+          Gezgin ara
+        </label>
+        <input
+          id="traveler-search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Gezgin ara…"
+          className="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-xl border px-3 py-2 text-sm outline-none focus-visible:ring-2"
+        />
+        {activeSearch ? (
+          <div className="border-border rounded-xl border px-2 py-2">
+            {searching ? (
+              <p className="text-muted-foreground px-2 py-1 text-sm">Aranıyor…</p>
+            ) : visibleSearchHits.length === 0 ? (
+              <p className="text-muted-foreground px-2 py-1 text-sm">Sonuç yok.</p>
+            ) : (
+              <ul className="space-y-1">
+                {visibleSearchHits.map((hit) => (
+                  <li key={hit.id}>
+                    <Link
+                      href={`/u/${hit.username}`}
+                      className="hover:bg-muted/60 flex items-center gap-3 rounded-lg px-2 py-2"
+                      onClick={() => setSearchQuery("")}
+                    >
+                      <AvatarBubble name={hit.displayName} avatarUrl={hit.avatarUrl} />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">
+                          {hit.displayName}
+                        </p>
+                        <p className="text-muted-foreground truncate text-xs">
+                          @{hit.username} · {hit.badge.label} · {hit.travelerScore} puan
+                          {hit.accountVisibility === "PRIVATE" ? " · private" : ""}
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : null}
+      </div>
+
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant={feed === "public" ? "default" : "outline"}
+          onClick={() => setFeed("public")}
+        >
+          Herkes
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={feed === "following" ? "default" : "outline"}
+          onClick={() => setFeed("following")}
+        >
+          Following
+        </Button>
+      </div>
+
       {loading ? (
         <div className="space-y-4">
           <Skeleton className="h-72 w-full rounded-2xl" />
@@ -210,7 +319,9 @@ export function ExploreFeedClient() {
         <div className="border-border rounded-2xl border px-5 py-10 text-center">
           <p className="font-medium">Şimdilik sessiz</p>
           <p className="text-muted-foreground mt-1 text-sm">
-            Başkaları public plan paylaşınca burada görünür.
+            {feed === "following"
+              ? "Takip ettiklerin public gezi paylaşınca burada görünür."
+              : "Public hesaplar public plan paylaşınca burada görünür."}
           </p>
         </div>
       ) : null}
@@ -228,13 +339,17 @@ export function ExploreFeedClient() {
               className="border-border bg-muted/30 overflow-hidden rounded-2xl border"
             >
               <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-                <AvatarBubble
-                  name={trip.owner.displayName}
-                  avatarUrl={trip.owner.avatarUrl}
-                />
+                <Link href={`/u/${trip.owner.username}`}>
+                  <AvatarBubble
+                    name={trip.owner.displayName}
+                    avatarUrl={trip.owner.avatarUrl}
+                  />
+                </Link>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">
-                    {trip.owner.displayName}
+                    <Link href={`/u/${trip.owner.username}`} className="hover:underline">
+                      {trip.owner.displayName}
+                    </Link>
                     <span className="text-muted-foreground font-normal">
                       {" "}
                       · @{trip.owner.username}

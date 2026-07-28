@@ -1,27 +1,29 @@
-import { exploreListQuerySchema } from "@/features/traveler/schemas";
+import { followListQuerySchema } from "@/features/traveler/schemas";
 import { getRequestCorrelationId } from "@/lib/api/request";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { getSessionUserId } from "@/lib/auth/session";
-import { listExploreTrips } from "@/server/application/traveler/explore";
+import { listFollowing } from "@/server/application/traveler/follow";
 
 export const runtime = "nodejs";
 
-export async function GET(request: Request) {
+type Params = { params: Promise<{ username: string }> };
+
+export async function GET(request: Request, { params }: Params) {
   const correlationId = getRequestCorrelationId(request);
 
   try {
+    const { username } = await params;
     const url = new URL(request.url);
-    const query = exploreListQuerySchema.parse({
+    const query = followListQuerySchema.parse({
       cursor: url.searchParams.get("cursor") ?? undefined,
       limit: url.searchParams.get("limit") ?? undefined,
-      feed: url.searchParams.get("feed") ?? undefined,
     });
     const viewerId = await getSessionUserId();
-    const result = await listExploreTrips({
+    const result = await listFollowing({
+      username,
       viewerId,
       cursor: query.cursor,
       limit: query.limit,
-      feed: query.feed,
     });
     return jsonOk(result, { correlationId });
   } catch (error) {

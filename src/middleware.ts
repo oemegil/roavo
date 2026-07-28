@@ -11,6 +11,8 @@ export const config = {
     "/settings/:path*",
     "/destinations/:path*",
     "/plan",
+    "/explore/:path*",
+    "/u/:path*",
     "/login",
     "/register",
   ],
