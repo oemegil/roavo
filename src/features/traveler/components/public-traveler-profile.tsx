@@ -25,6 +25,19 @@ type PublicTravelerProfile = {
   followStatus: "PENDING" | "ACTIVE" | null;
 };
 
+type PublicTripCard = {
+  id: string;
+  title: string;
+  description: string | null;
+  destinationName: string | null;
+  destinationRegion: string | null;
+  startDate: string;
+  endDate: string;
+  dayCount: number;
+  likeCount: number;
+  commentCount: number;
+};
+
 function Avatar({
   name,
   avatarUrl,
@@ -60,15 +73,32 @@ function Avatar({
 
 export function PublicTravelerProfileClient({ username }: { username: string }) {
   const [profile, setProfile] = useState<PublicTravelerProfile | null>(null);
+  const [trips, setTrips] = useState<PublicTripCard[]>([]);
+  const [tripsLoading, setTripsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [acting, setActing] = useState(false);
+
+  async function loadTrips(forUsername: string) {
+    setTripsLoading(true);
+    const response = await fetch(
+      `/api/v1/travelers/${encodeURIComponent(forUsername)}/trips`,
+    );
+    const payload = await response.json().catch(() => null);
+    setTripsLoading(false);
+    if (!response.ok) {
+      setTrips([]);
+      return;
+    }
+    setTrips(payload.trips ?? []);
+  }
 
   useEffect(() => {
     let cancelled = false;
     async function initial() {
       setLoading(true);
       setError(null);
+      setTrips([]);
       const response = await fetch(`/api/v1/travelers/${encodeURIComponent(username)}`);
       const payload = await response.json().catch(() => null);
       if (cancelled) return;
@@ -77,8 +107,21 @@ export function PublicTravelerProfileClient({ username }: { username: string }) 
         setLoading(false);
         return;
       }
-      setProfile(payload.profile);
+      const nextProfile = payload.profile as PublicTravelerProfile;
+      setProfile(nextProfile);
       setLoading(false);
+      if (nextProfile.canViewContent) {
+        setTripsLoading(true);
+        const tripsRes = await fetch(
+          `/api/v1/travelers/${encodeURIComponent(username)}/trips`,
+        );
+        const tripsPayload = await tripsRes.json().catch(() => null);
+        if (cancelled) return;
+        setTripsLoading(false);
+        if (tripsRes.ok) {
+          setTrips(tripsPayload.trips ?? []);
+        }
+      }
     }
     void initial();
     return () => {
@@ -93,7 +136,13 @@ export function PublicTravelerProfileClient({ username }: { username: string }) 
       setError(payload?.error?.message ?? "Profil yüklenemedi.");
       return;
     }
-    setProfile(payload.profile);
+    const nextProfile = payload.profile as PublicTravelerProfile;
+    setProfile(nextProfile);
+    if (nextProfile.canViewContent) {
+      await loadTrips(username);
+    } else {
+      setTrips([]);
+    }
   }
 
   async function follow() {
@@ -268,14 +317,64 @@ export function PublicTravelerProfileClient({ username }: { username: string }) 
       </div>
 
       {profile.canViewContent ? (
-        <div className="space-y-2">
-          {profile.bio ? <p className="text-body">{profile.bio}</p> : null}
-          <p className="text-muted-foreground text-sm">
-            {profile.badge.label}
-            {profile.publicTripCount !== null
-              ? ` · ${profile.publicTripCount} açık gezi`
-              : null}
-          </p>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            {profile.bio ? <p className="text-body">{profile.bio}</p> : null}
+            <p className="text-muted-foreground text-sm">
+              {profile.badge.label}
+              {profile.publicTripCount !== null
+                ? ` · ${profile.publicTripCount} açık gezi`
+                : null}
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-caption tracking-[0.14em] uppercase">Açık geziler</p>
+            {tripsLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-28 w-full rounded-xl" />
+                <Skeleton className="h-28 w-full rounded-xl" />
+              </div>
+            ) : null}
+            {!tripsLoading && trips.length === 0 ? (
+              <p className="text-muted-foreground text-sm">
+                Henüz paylaşılan public gezi yok.
+              </p>
+            ) : null}
+            <ul className="space-y-3">
+              {trips.map((trip) => {
+                const place =
+                  trip.destinationRegion ||
+                  trip.destinationName ||
+                  `${trip.startDate} → ${trip.endDate}`;
+                return (
+                  <li key={trip.id}>
+                    <Link
+                      href={`/explore/${trip.id}`}
+                      className="border-border hover:border-primary/40 block overflow-hidden rounded-xl border transition-colors"
+                    >
+                      <div className="flex min-h-28 flex-col justify-end bg-gradient-to-br from-slate-900 via-slate-700 to-amber-600 p-4 text-white">
+                        <p className="text-[11px] tracking-[0.16em] uppercase opacity-80">
+                          {trip.dayCount} gün · {place}
+                        </p>
+                        <h2 className="font-display mt-1 text-xl leading-tight font-semibold">
+                          {trip.title}
+                        </h2>
+                        {trip.description ? (
+                          <p className="mt-1 line-clamp-2 text-sm text-white/85">
+                            {trip.description}
+                          </p>
+                        ) : null}
+                        <p className="mt-2 text-xs text-white/70">
+                          {trip.likeCount} beğeni · {trip.commentCount} yorum
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       ) : (
         <div className="border-border rounded-xl border px-4 py-6 text-center">

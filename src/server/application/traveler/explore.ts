@@ -183,15 +183,14 @@ export async function listExploreTrips(input: {
     }
   }
 
-  const followingOwnerIds =
-    feed === "following" && input.viewerId
-      ? (
-          await prisma.userFollow.findMany({
-            where: { followerId: input.viewerId, status: "ACTIVE" },
-            select: { followingId: true },
-          })
-        ).map((row) => row.followingId)
-      : [];
+  const followingOwnerIds = input.viewerId
+    ? (
+        await prisma.userFollow.findMany({
+          where: { followerId: input.viewerId, status: "ACTIVE" },
+          select: { followingId: true },
+        })
+      ).map((row) => row.followingId)
+    : [];
 
   if (feed === "following" && followingOwnerIds.length === 0) {
     return { trips: [], nextCursor: null };
@@ -202,15 +201,23 @@ export async function listExploreTrips(input: {
       deletedAt: null,
       status: "DRAFT",
       visibility: "PUBLIC",
+      ...(input.viewerId ? { ownerId: { not: input.viewerId } } : {}),
       ...(feed === "following"
         ? { ownerId: { in: followingOwnerIds } }
         : {
-            ...(input.viewerId ? { ownerId: { not: input.viewerId } } : {}),
-            owner: {
-              accountVisibility: "PUBLIC",
-              status: "ACTIVE",
-              deletedAt: null,
-            },
+            // Herkes: public accounts + people you already follow (incl. private).
+            OR: [
+              {
+                owner: {
+                  accountVisibility: "PUBLIC",
+                  status: "ACTIVE",
+                  deletedAt: null,
+                },
+              },
+              ...(followingOwnerIds.length > 0
+                ? [{ ownerId: { in: followingOwnerIds } }]
+                : []),
+            ],
           }),
     },
     include: {

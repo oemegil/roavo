@@ -321,7 +321,7 @@ export function ExploreFeedClient() {
           <p className="text-muted-foreground mt-1 text-sm">
             {feed === "following"
               ? "Takip ettiklerin public gezi paylaşınca burada görünür."
-              : "Public hesaplar public plan paylaşınca burada görünür."}
+              : "Public hesaplar ve takip ettiklerin public plan paylaşınca burada görünür."}
           </p>
         </div>
       ) : null}

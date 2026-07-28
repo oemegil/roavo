@@ -4,6 +4,7 @@ import { AppError } from "@/lib/errors";
 import { normalizeUsername } from "@/lib/auth/username";
 import { prisma } from "@/server/infrastructure/database";
 import { pointsFromMinor, primaryBadgeForScore } from "@/server/domain/traveler/score";
+import { formatDateOnly } from "@/server/domain/trips/date-only";
 import { resolveAccountAccess } from "@/server/domain/traveler/visibility";
 
 function mapTravelerCard(user: {
@@ -298,6 +299,72 @@ export async function getTravelerPublicProfile(input: {
     canViewContent: access.canViewContent,
     isSelf: access.isSelf,
     followStatus: access.followStatus,
+  };
+}
+
+export async function listTravelerPublicTrips(input: {
+  username: string;
+  viewerId?: string | null;
+  cursor?: string;
+  limit?: number;
+}) {
+  const profile = await getTravelerPublicProfile({
+    username: input.username,
+    viewerId: input.viewerId,
+  });
+
+  if (!profile.canViewContent) {
+    throw new AppError({
+      code: "FORBIDDEN",
+      message: "Bu gezginin gezileri görünür değil.",
+      status: 403,
+    });
+  }
+
+  const limit = Math.min(input.limit ?? 20, 50);
+  const rows = await prisma.trip.findMany({
+    where: {
+      ownerId: profile.id,
+      deletedAt: null,
+      status: "DRAFT",
+      visibility: "PUBLIC",
+      ...(input.cursor ? { id: { lt: input.cursor } } : {}),
+    },
+    orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+    take: limit + 1,
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      destinationName: true,
+      destinationRegionNameSnapshot: true,
+      startDate: true,
+      endDate: true,
+      likeCount: true,
+      commentCount: true,
+      updatedAt: true,
+      _count: { select: { days: true } },
+    },
+  });
+
+  const page = rows.slice(0, limit);
+  const nextCursor = rows.length > limit ? page[page.length - 1]?.id : null;
+
+  return {
+    trips: page.map((trip) => ({
+      id: trip.id,
+      title: trip.title,
+      description: trip.description,
+      destinationName: trip.destinationName,
+      destinationRegion: trip.destinationRegionNameSnapshot,
+      startDate: formatDateOnly(trip.startDate),
+      endDate: formatDateOnly(trip.endDate),
+      dayCount: trip._count.days,
+      likeCount: trip.likeCount,
+      commentCount: trip.commentCount,
+      updatedAt: trip.updatedAt.toISOString(),
+    })),
+    nextCursor,
   };
 }
 
