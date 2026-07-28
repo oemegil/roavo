@@ -43,6 +43,12 @@ export const serverEnvSchema = z.object({
   /** Destination discovery provider. MVP supports internal catalog only. */
   DESTINATION_PROVIDER: z.enum(["internal"]).default("internal"),
   IGNAV_API_KEY: z.string().min(1).optional(),
+  /** Daily traveler-score caps. Like cap: 0 = unlimited (default). */
+  TRAVELER_SCORE_FLIGHT_DAILY_CAP: z.coerce.number().int().min(0).default(2),
+  TRAVELER_SCORE_PREVIEW_DAILY_CAP: z.coerce.number().int().min(0).default(5),
+  TRAVELER_SCORE_LIKE_DAILY_CAP: z.coerce.number().int().min(0).default(0),
+  /** Like received award in minor units (10 = +1.0). */
+  TRAVELER_SCORE_LIKE_AMOUNT_MINOR: z.coerce.number().int().min(0).default(10),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

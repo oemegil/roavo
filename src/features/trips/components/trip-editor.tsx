@@ -131,6 +131,12 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
           {trip.destinationName ?? "Destinasyon belirlenmedi"} · {trip.startDate} –{" "}
           {trip.endDate}
         </p>
+        <p className="text-muted-foreground text-sm">
+          {trip.visibility === "PUBLIC"
+            ? `Herkese açık · ${trip.likeCount} beğeni`
+            : "Özel gezi"}{" "}
+          · görünürlük için ayarlar
+        </p>
         {!readOnly ? (
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={savePlan} disabled={generating}>

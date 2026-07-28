@@ -25,6 +25,22 @@ enum TripStatus {
   ARCHIVED
 }
 
+enum TripVisibility {
+  PRIVATE
+  PUBLIC
+  /// Reserved for future friends-only sharing.
+  FRIENDS
+}
+
+enum TravelerScoreAction {
+  FLIGHT_SEARCH
+  PLAN_PREVIEW
+  TRIP_SAVE
+  TRIP_LIKE_RECEIVED
+  /// Reserved — photo verification (not awarded in v1).
+  PHOTO_VERIFICATION
+}
+
 enum TravelPace {
   RELAXED
   BALANCED
@@ -101,27 +117,32 @@ enum DestinationProviderKind {
 }
 
 model User {
-  id              String     @id @default(cuid())
-  email           String
-  emailNormalized String     @unique
-  passwordHash    String?
-  status          UserStatus @default(ACTIVE)
-  role            UserRole   @default(USER)
-  emailVerifiedAt DateTime?
-  tokenVersion    Int        @default(0)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  deletedAt       DateTime?
+  id                 String     @id @default(cuid())
+  email              String
+  emailNormalized    String     @unique
+  passwordHash       String?
+  status             UserStatus @default(ACTIVE)
+  role               UserRole   @default(USER)
+  emailVerifiedAt    DateTime?
+  tokenVersion       Int        @default(0)
+  /** Traveler score in minor units (0.5 point = 5). */
+  travelerScoreMinor Int        @default(0)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  deletedAt          DateTime?
 
   profile                    UserProfile?
   accounts                   Account[]
   sessions                   Session[]
   trips                      Trip[]
+  tripLikes                  TripLike[]
+  travelerScoreEvents        TravelerScoreEvent[]
   aiOperations               AiOperation[]
   destinationRecommendations DestinationRecommendation[]
   aiPreviews                 AiPreview[]
 
   @@index([status])
+  @@index([travelerScoreMinor])
   @@map("users")
 }
 
@@ -258,6 +279,8 @@ model Trip {
   title                         String
   description                   String?
   status                        TripStatus                 @default(DRAFT)
+  visibility                    TripVisibility             @default(PRIVATE)
+  likeCount                     Int                        @default(0)
   originName                    String
   originCountryCode             String?
   originPlaceId                 String?
@@ -283,18 +306,52 @@ model Trip {
   archivedAt                    DateTime?
   deletedAt                     DateTime?
 
-  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  destination Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
-  days        TripDay[]
-  stops       TripStop[]
-  flightQuote FlightQuote?
+  owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  destination  Destination? @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  days         TripDay[]
+  stops        TripStop[]
+  flightQuote  FlightQuote?
+  likes        TripLike[]
   aiOperations AiOperation[]
   aiPreviews   AiPreview[]
 
   @@index([ownerId, status, updatedAt])
   @@index([ownerId, deletedAt, updatedAt])
   @@index([destinationId])
+  @@index([visibility, likeCount, updatedAt])
   @@map("trips")
+}
+
+model TripLike {
+  id        String   @id @default(cuid())
+  tripId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tripId, userId])
+  @@index([userId, createdAt])
+  @@map("trip_likes")
+}
+
+model TravelerScoreEvent {
+  id           String              @id @default(cuid())
+  userId       String
+  action       TravelerScoreAction
+  amountMinor  Int
+  tripId       String?
+  /** Dedup / once-per-entity key (e.g. tripId for TRIP_SAVE, likeId for likes). */
+  referenceKey String?
+  createdAt    DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, action, createdAt])
+  @@index([userId, createdAt])
+  @@unique([userId, action, referenceKey])
+  @@map("traveler_score_events")
 }
 
 model TripStop {

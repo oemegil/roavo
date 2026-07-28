@@ -3,6 +3,7 @@ import "server-only";
 import { AppError } from "@/lib/errors";
 import type { CreateManualTripInput } from "@/features/plan/schemas";
 import { toTripDetailDto, type TripDetailDto } from "@/features/trips/dto";
+import { awardTravelerScore } from "@/server/application/traveler/award-score";
 import {
   inclusiveDayCount,
   parseDateOnly,
@@ -125,6 +126,13 @@ export async function createManualTripService(input: {
   const refreshed = await prisma.trip.findFirstOrThrow({
     where: { id: trip.id },
     include: tripDetailInclude,
+  });
+
+  void awardTravelerScore({
+    userId: input.ownerId,
+    action: "TRIP_SAVE",
+    tripId: trip.id,
+    referenceKey: trip.id,
   });
 
   return { trip: toTripDetailDto(refreshed) };

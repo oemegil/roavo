@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, Sparkles } from "lucide-react";
+import { Compass, Map, Sparkles, UserRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/plan", label: "Planla", icon: Sparkles },
+  { href: "/explore", label: "Keşfet", icon: Compass },
   { href: "/trips", label: "Gezilerim", icon: Map },
+  { href: "/profile", label: "Profil", icon: UserRound },
 ];
 
 export function AppBottomNav() {
@@ -19,7 +21,7 @@ export function AppBottomNav() {
   return (
     <nav
       aria-label="Ana menü"
-      className="border-border bg-background/95 sticky bottom-0 z-20 border-t backdrop-blur supports-[backdrop-filter]:bg-background/80"
+      className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky bottom-0 z-20 border-t backdrop-blur"
     >
       <ul className="mx-auto flex max-w-3xl items-stretch justify-around px-2 py-2">
         {navItems.map((item) => {

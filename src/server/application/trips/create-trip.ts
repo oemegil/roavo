@@ -6,6 +6,7 @@ import { TRIP_LIMITS } from "@/server/domain/trips/constants";
 import { inclusiveDayCount, parseDateOnly } from "@/server/domain/trips/date-only";
 import type { CreateTripInput } from "@/features/trips/schemas";
 import { toTripDetailDto, type TripDetailDto } from "@/features/trips/dto";
+import { awardTravelerScore } from "@/server/application/traveler/award-score";
 import { findActiveDestinationById } from "@/server/repositories/destination-repository";
 import { createTripWithDays } from "@/server/repositories/trip-repository";
 
@@ -79,6 +80,14 @@ export async function createTripService(input: {
       userId: input.ownerId,
       dayCount: trip.days.length,
       destinationSource: resolvedDestination.destinationSource,
+    });
+
+    void awardTravelerScore({
+      userId: input.ownerId,
+      action: "TRIP_SAVE",
+      tripId: trip.id,
+      referenceKey: trip.id,
+      correlationId: input.correlationId,
     });
 
     return toTripDetailDto(trip);

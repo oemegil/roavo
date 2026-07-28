@@ -1,5 +1,9 @@
-import { redirect } from "next/navigation";
+import { TravelerProfileClient } from "@/features/traveler/components/traveler-profile";
+
+export const metadata = {
+  title: "Profil",
+};
 
 export default function ProfilePage() {
-  redirect("/trips");
+  return <TravelerProfileClient />;
 }

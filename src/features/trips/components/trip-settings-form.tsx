@@ -44,6 +44,9 @@ export function TripSettingsForm({ trip }: { trip: TripDetailDto }) {
   );
   const [startDate, setStartDate] = useState(trip.startDate);
   const [endDate, setEndDate] = useState(trip.endDate);
+  const [visibility, setVisibility] = useState<"PRIVATE" | "PUBLIC">(
+    trip.visibility === "PUBLIC" ? "PUBLIC" : "PRIVATE",
+  );
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -67,15 +70,26 @@ export function TripSettingsForm({ trip }: { trip: TripDetailDto }) {
     const detailsPayload = await detailsResponse.json().catch(() => null);
     if (!detailsResponse.ok) {
       setPending(false);
-      setError(
-        detailsPayload?.error?.message ?? "Gezi detayları kaydedilemedi.",
-      );
+      setError(detailsPayload?.error?.message ?? "Gezi detayları kaydedilemedi.");
       return;
     }
 
+    if (visibility !== (trip.visibility === "PUBLIC" ? "PUBLIC" : "PRIVATE")) {
+      const visibilityResponse = await fetch(`/api/v1/trips/${trip.id}/visibility`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ visibility }),
+      });
+      const visibilityPayload = await visibilityResponse.json().catch(() => null);
+      if (!visibilityResponse.ok) {
+        setPending(false);
+        setError(visibilityPayload?.error?.message ?? "Görünürlük güncellenemedi.");
+        return;
+      }
+    }
+
     const current = toSelection(trip);
-    const destinationChanged =
-      JSON.stringify(current) !== JSON.stringify(destination);
+    const destinationChanged = JSON.stringify(current) !== JSON.stringify(destination);
 
     if (destinationChanged) {
       if (!destination) {
@@ -89,9 +103,7 @@ export function TripSettingsForm({ trip }: { trip: TripDetailDto }) {
         const clearPayload = await clearResponse.json().catch(() => null);
         if (!clearResponse.ok) {
           setPending(false);
-          setError(
-            clearPayload?.error?.message ?? "Destinasyon temizlenemedi.",
-          );
+          setError(clearPayload?.error?.message ?? "Destinasyon temizlenemedi.");
           return;
         }
       } else {
@@ -118,9 +130,7 @@ export function TripSettingsForm({ trip }: { trip: TripDetailDto }) {
         const destPayload = await destResponse.json().catch(() => null);
         if (!destResponse.ok) {
           setPending(false);
-          setError(
-            destPayload?.error?.message ?? "Destinasyon güncellenemedi.",
-          );
+          setError(destPayload?.error?.message ?? "Destinasyon güncellenemedi.");
           return;
         }
       }
@@ -162,6 +172,24 @@ export function TripSettingsForm({ trip }: { trip: TripDetailDto }) {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="visibility">Görünürlük</Label>
+        <select
+          id="visibility"
+          className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          value={visibility}
+          onChange={(e) =>
+            setVisibility(e.target.value === "PUBLIC" ? "PUBLIC" : "PRIVATE")
+          }
+          disabled={trip.status === "ARCHIVED"}
+        >
+          <option value="PRIVATE">Özel — sadece sen</option>
+          <option value="PUBLIC">Herkese açık — Keşfet’te görünür</option>
+        </select>
+        <p className="text-muted-foreground text-sm">
+          Public gezilerde uçuş bilgisi paylaşılmaz; sadece plan görünür.
+        </p>
       </div>
       {error ? (
         <Alert variant="destructive">

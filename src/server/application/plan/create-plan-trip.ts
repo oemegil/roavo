@@ -4,6 +4,7 @@ import { AppError } from "@/lib/errors";
 import { createRequestLogger } from "@/lib/logging/logger";
 import type { CreatePlanTripInput } from "@/features/plan/schemas";
 import { toTripDetailDto, type TripDetailDto } from "@/features/trips/dto";
+import { awardTravelerScore } from "@/server/application/traveler/award-score";
 import { generateItineraryPreviewService } from "@/server/application/ai/itinerary-generation";
 import {
   geocodeGeneratedItineraryPlaces,
@@ -217,6 +218,14 @@ export async function createPlanTripService(input: {
   const refreshed = await prisma.trip.findFirstOrThrow({
     where: { id: trip.id },
     include: tripDetailInclude,
+  });
+
+  void awardTravelerScore({
+    userId: input.ownerId,
+    action: "TRIP_SAVE",
+    tripId: trip.id,
+    referenceKey: trip.id,
+    correlationId: input.correlationId,
   });
 
   return { trip: toTripDetailDto(refreshed), previewId, itineraryError };

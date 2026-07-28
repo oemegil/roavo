@@ -20,6 +20,7 @@ import { generateDaysForRange } from "@/server/domain/trips/day-planner";
 import { resolveCitiesByIds } from "@/server/domain/places/catalog";
 import { countUserAiOperationsToday } from "@/server/repositories/ai-repository";
 import { geocodeGeneratedItineraryPlaces } from "@/server/application/plan/persist-generated-itinerary";
+import { awardTravelerScore } from "@/server/application/traveler/award-score";
 import type { PlanMapPin } from "@/features/maps/google-export";
 
 const WEEKDAYS_EN = [
@@ -211,6 +212,13 @@ export async function previewPlanItineraryService(input: {
       });
     }
   }
+
+  void awardTravelerScore({
+    userId: input.userId,
+    action: "PLAN_PREVIEW",
+    referenceKey: executed.operationId,
+    correlationId: input.correlationId,
+  });
 
   return {
     itinerary: executed.output,

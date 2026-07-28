@@ -62,6 +62,8 @@ export type TripSummaryDto = {
   totalBudgetMajor: number | null;
   currencyCode: string;
   status: TripStatus;
+  visibility: "PRIVATE" | "PUBLIC" | "FRIENDS";
+  likeCount: number;
   dayCount: number;
   itemCount: number;
   createdAt: string;
@@ -73,6 +75,8 @@ export type TripDetailDto = {
   title: string;
   description: string | null;
   status: TripStatus;
+  visibility: "PRIVATE" | "PUBLIC" | "FRIENDS";
+  likeCount: number;
   originName: string;
   originCountryCode: string | null;
   originPlaceId: string | null;
@@ -189,6 +193,8 @@ export function toTripSummaryDto(trip: TripWithCounts): TripSummaryDto {
         : null,
     currencyCode: trip.currencyCode,
     status: trip.status,
+    visibility: trip.visibility,
+    likeCount: trip.likeCount,
     dayCount,
     itemCount,
     createdAt: trip.createdAt.toISOString(),
@@ -211,6 +217,8 @@ export function toTripDetailDto(
     title: trip.title,
     description: trip.description,
     status: trip.status,
+    visibility: trip.visibility,
+    likeCount: trip.likeCount,
     originName: trip.originName,
     originCountryCode: trip.originCountryCode,
     originPlaceId: trip.originPlaceId,

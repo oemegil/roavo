@@ -29,8 +29,7 @@ export function getServerEnv(): ServerEnv {
     AI_PROVIDER: process.env.AI_PROVIDER,
     AI_MODEL: process.env.AI_MODEL,
     AI_FALLBACK_MODELS: process.env.AI_FALLBACK_MODELS || undefined,
-    AI_OPENROUTER_FALLBACK_MODELS:
-      process.env.AI_OPENROUTER_FALLBACK_MODELS || undefined,
+    AI_OPENROUTER_FALLBACK_MODELS: process.env.AI_OPENROUTER_FALLBACK_MODELS || undefined,
     AI_API_KEY: process.env.AI_API_KEY || undefined,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || undefined,
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY || undefined,
@@ -45,6 +44,10 @@ export function getServerEnv(): ServerEnv {
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST ?? "true",
     DESTINATION_PROVIDER: process.env.DESTINATION_PROVIDER ?? "internal",
     IGNAV_API_KEY: process.env.IGNAV_API_KEY,
+    TRAVELER_SCORE_FLIGHT_DAILY_CAP: process.env.TRAVELER_SCORE_FLIGHT_DAILY_CAP,
+    TRAVELER_SCORE_PREVIEW_DAILY_CAP: process.env.TRAVELER_SCORE_PREVIEW_DAILY_CAP,
+    TRAVELER_SCORE_LIKE_DAILY_CAP: process.env.TRAVELER_SCORE_LIKE_DAILY_CAP,
+    TRAVELER_SCORE_LIKE_AMOUNT_MINOR: process.env.TRAVELER_SCORE_LIKE_AMOUNT_MINOR,
   });
 
   if (!parsed.success) {
@@ -59,8 +62,7 @@ export function getServerEnv(): ServerEnv {
 
 /** Soft validation for health checks — does not throw. */
 export function getServerEnvSafe():
-  | { success: true; data: ServerEnv }
-  | { success: false; error: string } {
+  { success: true; data: ServerEnv } | { success: false; error: string } {
   try {
     return { success: true, data: getServerEnv() };
   } catch (error) {

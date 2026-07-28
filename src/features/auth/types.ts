@@ -17,6 +17,8 @@ export type AuthenticatedUser = {
   preferredLanguage: string | null;
   travelPreferences: TravelPreferences;
   emailVerifiedAt: Date | null;
+  travelerScore: number;
+  travelerScoreMinor: number;
 };
 
 export function parseTravelPreferences(value: unknown): TravelPreferences {
@@ -24,10 +26,8 @@ export function parseTravelPreferences(value: unknown): TravelPreferences {
   return parsed.success ? parsed.data : {};
 }
 
-export function toAuthenticatedUser(
-  user: User,
-  profile: UserProfile,
-): AuthenticatedUser {
+export function toAuthenticatedUser(user: User, profile: UserProfile): AuthenticatedUser {
+  const travelerScoreMinor = user.travelerScoreMinor ?? 0;
   return {
     id: user.id,
     email: user.email,
@@ -42,6 +42,8 @@ export function toAuthenticatedUser(
     preferredLanguage: profile.preferredLanguage,
     travelPreferences: parseTravelPreferences(profile.travelPreferences),
     emailVerifiedAt: user.emailVerifiedAt,
+    travelerScoreMinor,
+    travelerScore: Math.round((travelerScoreMinor / 10) * 10) / 10,
   };
 }
 

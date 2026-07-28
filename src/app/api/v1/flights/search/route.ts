@@ -1,9 +1,11 @@
 import { getRequestCorrelationId } from "@/lib/api/request";
 import { jsonError, jsonOk } from "@/lib/api/response";
 import { flightSearchSchema } from "@/features/plan/schemas";
+import { getSessionUserId } from "@/lib/auth/session";
 import { AppError } from "@/lib/errors";
 import { parseJsonBody } from "@/lib/validation/http";
 import { searchBestOpenJawFlights } from "@/server/application/flights/search-flights";
+import { awardTravelerScore } from "@/server/application/traveler/award-score";
 import {
   listPopularCitiesInRegion,
   resolveCitiesByIds,
@@ -51,6 +53,15 @@ export async function POST(request: Request) {
         message:
           "Bu rota için uçuş bulunamadı. Tarihleri veya şehirleri değiştirmeyi dene.",
         status: 404,
+      });
+    }
+
+    const userId = await getSessionUserId();
+    if (userId) {
+      void awardTravelerScore({
+        userId,
+        action: "FLIGHT_SEARCH",
+        correlationId,
       });
     }
 
