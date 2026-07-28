@@ -367,6 +367,8 @@ model ItineraryItem {
   description        String?
   locationName       String?
   externalPlaceId    String?
+  latitude           Decimal?            @db.Decimal(9, 6)
+  longitude          Decimal?            @db.Decimal(9, 6)
   startMinutes       Int?
   endMinutes         Int?
   durationMinutes    Int?
@@ -383,6 +385,21 @@ model ItineraryItem {
 
   @@index([tripDayId, position])
   @@map("itinerary_items")
+}
+
+/** Nominatim / OSM geocode cache — avoid repeat lookups. */
+model GeocodeCache {
+  id          String   @id @default(cuid())
+  queryKey    String   @unique
+  latitude    Decimal? @db.Decimal(9, 6)
+  longitude   Decimal? @db.Decimal(9, 6)
+  displayName String?
+  osmId       String?
+  found       Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("geocode_cache")
 }
 
 enum AiOperationType {

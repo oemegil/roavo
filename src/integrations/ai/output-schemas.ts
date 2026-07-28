@@ -56,10 +56,7 @@ const ITEM_TYPE_ALIASES: Record<string, z.infer<typeof itineraryItemType>> = {
   BREAK: "FREE_TIME",
 };
 
-const TRANSPORT_MODE_ALIASES: Record<
-  string,
-  z.infer<typeof transportationMode>
-> = {
+const TRANSPORT_MODE_ALIASES: Record<string, z.infer<typeof transportationMode>> = {
   SUBWAY: "PUBLIC_TRANSIT",
   METRO: "PUBLIC_TRANSIT",
   BUS: "PUBLIC_TRANSIT",
@@ -79,28 +76,24 @@ function normalizeEnumAlias<T extends string>(
   allowed: readonly T[],
 ): unknown {
   if (typeof value !== "string") return value;
-  const upper = value.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  const upper = value
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
   if ((allowed as readonly string[]).includes(upper)) return upper;
   return aliases[upper] ?? value;
 }
 
-const hhMm = z
-  .string()
-  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm");
+const hhMm = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use HH:mm");
 
 const itineraryItemTypeSchema = z.preprocess(
-  (value) =>
-    normalizeEnumAlias(value, ITEM_TYPE_ALIASES, itineraryItemType.options),
+  (value) => normalizeEnumAlias(value, ITEM_TYPE_ALIASES, itineraryItemType.options),
   itineraryItemType,
 );
 
 const transportationModeSchema = z.preprocess(
   (value) =>
-    normalizeEnumAlias(
-      value,
-      TRANSPORT_MODE_ALIASES,
-      transportationMode.options,
-    ),
+    normalizeEnumAlias(value, TRANSPORT_MODE_ALIASES, transportationMode.options),
   transportationMode,
 );
 
@@ -146,13 +139,26 @@ export const generatedItineraryItemSchema = z.object({
   locationName: z.string().max(160).nullable(),
   startTime: hhMm.nullable(),
   endTime: hhMm.nullable(),
-  durationMinutes: z.number().int().min(15).max(24 * 60).nullable(),
+  durationMinutes: z
+    .number()
+    .int()
+    .min(15)
+    .max(24 * 60)
+    .nullable(),
   estimatedCostMinor: z.number().int().min(0).nullable(),
   currencyCode: z.string().length(3).nullable(),
   transportationMode: transportationModeSchema.nullable(),
   notes: z.string().max(1500).nullable(),
   rationale: z.string().max(400).nullable(),
 });
+
+/** Named stops for OSM geocoding — no coordinates from the model. */
+export const generatedItineraryPlaceSchema = z.object({
+  name: z.string().min(1).max(160),
+  city: z.string().min(1).max(120).optional().nullable(),
+});
+
+export type GeneratedItineraryPlace = z.infer<typeof generatedItineraryPlaceSchema>;
 
 /** Day-level textual itinerary (preferred). Timed items are optional/legacy. */
 export const generatedItinerarySchema = z.object({
@@ -172,6 +178,11 @@ export const generatedItinerarySchema = z.object({
         /** Concerts/festivals/fairs in that city on that date, if any */
         eventsHighlight: z.string().max(1000).nullable(),
         notes: z.string().max(2000).nullable(),
+        /**
+         * Real, searchable place names for map pins (geocoded via Nominatim).
+         * Prefer landmark/restaurant names over vague neighborhood labels.
+         */
+        places: z.array(generatedItineraryPlaceSchema).max(12).optional().default([]),
         items: z.array(generatedItineraryItemSchema).max(12).optional().default([]),
       }),
     )
@@ -181,13 +192,16 @@ export const generatedItinerarySchema = z.object({
 
 export type GeneratedItinerary = z.infer<typeof generatedItinerarySchema>;
 
-const editItemPayload = generatedItineraryItemSchema.omit({ temporaryId: true }).partial({
-  rationale: true,
-}).extend({
-  temporaryId: z.string().min(1).max(64).optional(),
-  type: itineraryItemTypeSchema,
-  title: z.string().min(1).max(120),
-});
+const editItemPayload = generatedItineraryItemSchema
+  .omit({ temporaryId: true })
+  .partial({
+    rationale: true,
+  })
+  .extend({
+    temporaryId: z.string().min(1).max(64).optional(),
+    type: itineraryItemTypeSchema,
+    title: z.string().min(1).max(120),
+  });
 
 export const itineraryEditPlanSchema = z.object({
   summary: z.string().min(1).max(500),
@@ -212,7 +226,13 @@ export const itineraryEditPlanSchema = z.object({
             locationName: z.string().max(160).nullable().optional(),
             startTime: hhMm.nullable().optional(),
             endTime: hhMm.nullable().optional(),
-            durationMinutes: z.number().int().min(15).max(24 * 60).nullable().optional(),
+            durationMinutes: z
+              .number()
+              .int()
+              .min(15)
+              .max(24 * 60)
+              .nullable()
+              .optional(),
             estimatedCostMinor: z.number().int().min(0).nullable().optional(),
             currencyCode: z.string().length(3).nullable().optional(),
             transportationMode: transportationModeSchema.nullable().optional(),

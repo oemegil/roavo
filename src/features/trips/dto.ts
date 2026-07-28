@@ -19,6 +19,8 @@ export type ItineraryItemDto = {
   description: string | null;
   locationName: string | null;
   externalPlaceId: string | null;
+  latitude: number | null;
+  longitude: number | null;
   startTime: string | null;
   endTime: string | null;
   durationMinutes: number | null;
@@ -113,6 +115,8 @@ export function toItineraryItemDto(item: ItineraryItem): ItineraryItemDto {
     description: item.description,
     locationName: item.locationName,
     externalPlaceId: item.externalPlaceId,
+    latitude: item.latitude != null ? Number(item.latitude) : null,
+    longitude: item.longitude != null ? Number(item.longitude) : null,
     startTime: item.startMinutes !== null ? minutesToHhMm(item.startMinutes) : null,
     endTime: item.endMinutes !== null ? minutesToHhMm(item.endMinutes) : null,
     durationMinutes: item.durationMinutes,
@@ -133,9 +137,7 @@ export function toItineraryItemDto(item: ItineraryItem): ItineraryItemDto {
   };
 }
 
-export function toTripDayDto(
-  day: TripDay & { items: ItineraryItem[] },
-): TripDayDto {
+export function toTripDayDto(day: TripDay & { items: ItineraryItem[] }): TripDayDto {
   const items = [...day.items]
     .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
     .map(toItineraryItemDto);

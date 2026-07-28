@@ -1,5 +1,10 @@
 # Maps integration boundary
 
-Map rendering and geocoding adapters will live here.
+Adapters for map rendering and geocoding live here.
 
-Do not import map vendor SDKs outside this module when they are introduced.
+- `nominatim.ts` — OpenStreetMap Nominatim search (server-only)
+- `geocode.ts` — cached geocode helper used by itinerary persist / API
+
+UI map components that render Leaflet + OSM tiles live under
+`src/features/maps/` (client components). Do not import Leaflet from
+server modules.

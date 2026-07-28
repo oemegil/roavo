@@ -150,9 +150,9 @@ function defaultStructuredResponse(request: AiGenerateStructuredRequest): string
     const dates = [...request.userPrompt.matchAll(/"date":"(\d{4}-\d{2}-\d{2})"/g)].map(
       (m) => m[1]!,
     );
-    const cities = [
-      ...request.userPrompt.matchAll(/"name(?:Tr)?":"([^"]+)"/g),
-    ].map((m) => m[1]!);
+    const cities = [...request.userPrompt.matchAll(/"name(?:Tr)?":"([^"]+)"/g)].map(
+      (m) => m[1]!,
+    );
     const uniqueDates = [...new Set(dates)];
     const cityName = cities[0] ?? "şehir";
     const schedulePad =
@@ -183,6 +183,11 @@ function defaultStructuredResponse(request: AiGenerateStructuredRequest): string
           scheduleText,
           eventsHighlight: null,
           notes: null,
+          places: [
+            { name: `${focus} merkez meydanı`, city: focus },
+            { name: `${focus} müzesi`, city: focus },
+            { name: `${focus} parkı`, city: focus },
+          ],
           items: [],
         };
       }),
@@ -190,8 +195,7 @@ function defaultStructuredResponse(request: AiGenerateStructuredRequest): string
   }
 
   if (request.operation === "ITINERARY_EDIT") {
-    const itemId =
-      request.userPrompt.match(/"id":"([^"]+)"/)?.[1] ?? "item-unknown";
+    const itemId = request.userPrompt.match(/"id":"([^"]+)"/)?.[1] ?? "item-unknown";
     return JSON.stringify({
       summary: "Make the plan slightly more relaxed.",
       warnings: [],
@@ -207,8 +211,7 @@ function defaultStructuredResponse(request: AiGenerateStructuredRequest): string
   }
 
   if (request.operation === "ITINERARY_DAY_REGENERATION") {
-    const dayId =
-      request.userPrompt.match(/"id":"([^"]+)"/)?.[1] ?? "day-unknown";
+    const dayId = request.userPrompt.match(/"id":"([^"]+)"/)?.[1] ?? "day-unknown";
     return JSON.stringify({
       summary: "Regenerated day with outdoor focus.",
       warnings: [],
@@ -235,8 +238,7 @@ function defaultStructuredResponse(request: AiGenerateStructuredRequest): string
   }
 
   if (request.operation === "ITINERARY_ITEM_REPLACEMENT") {
-    const itemId =
-      request.userPrompt.match(/"id":"([^"]+)"/)?.[1] ?? "item-unknown";
+    const itemId = request.userPrompt.match(/"id":"([^"]+)"/)?.[1] ?? "item-unknown";
     return JSON.stringify({
       summary: "Replaced with an outdoor activity.",
       warnings: [],

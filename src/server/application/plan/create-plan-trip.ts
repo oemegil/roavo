@@ -5,7 +5,10 @@ import { createRequestLogger } from "@/lib/logging/logger";
 import type { CreatePlanTripInput } from "@/features/plan/schemas";
 import { toTripDetailDto, type TripDetailDto } from "@/features/trips/dto";
 import { generateItineraryPreviewService } from "@/server/application/ai/itinerary-generation";
-import { persistGeneratedItinerary } from "@/server/application/plan/persist-generated-itinerary";
+import {
+  geocodeGeneratedItineraryPlaces,
+  persistGeneratedItinerary,
+} from "@/server/application/plan/persist-generated-itinerary";
 import { inclusiveDayCount, parseDateOnly } from "@/server/domain/trips/date-only";
 import { resolveCitiesByIds } from "@/server/domain/places/catalog";
 import { findActiveDestinationBySlug } from "@/server/repositories/destination-repository";
@@ -83,6 +86,10 @@ export async function createPlanTripService(input: {
     });
   }
 
+  const geocodedPlaces = input.data.itinerary
+    ? await geocodeGeneratedItineraryPlaces(input.data.itinerary)
+    : [];
+
   const trip = await prisma.$transaction(
     async (tx) => {
       const created = await tx.trip.create({
@@ -147,12 +154,13 @@ export async function createPlanTripService(input: {
           days: created.days,
           itinerary: input.data.itinerary,
           currencyCode: input.data.currencyCode,
+          geocodedPlaces,
         });
       }
 
       return created;
     },
-    { timeout: 30_000, maxWait: 10_000 },
+    { timeout: 60_000, maxWait: 10_000 },
   );
 
   log.info("Plan trip created", {

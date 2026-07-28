@@ -23,9 +23,10 @@ describe("parseJsonSafe", () => {
           theme: "Keşif",
           cityName: "Madrid",
           scheduleText:
-            "10:00-12:00 — Plaza Mayor\nMadrid'in Habsburg döneminden kalma ana meydanı; çevresindeki kemerler altında yürürken şehrin kalbini hissedersiniz.\nİpucu: Öğleden önce daha sakindir.\n\n12:30-14:00 — Tapas molası\nYakın bir lokantada yerel lezzetlerle öğle molası.",
+            "10:00-12:00 — Plaza Mayor\nMadrid'in Habsburg döneminden kalma ana meydanı; çevresindeki kemerler altında yürürken şehrin kalbini hissedersiniz.\nİpucu: Öğleden önce daha sakindir.\n\n12:30-14:00 — Tapas molası\nYakın bir lokantada yerel lezzetlerle öğle molası. Bölgenin ritmini yakalamak için kısa bir yürüyüş daha ekleyin.",
           eventsHighlight: null,
           notes: null,
+          places: [{ name: "Plaza Mayor", city: "Madrid" }],
         },
       ],
     }).slice(0, -1);

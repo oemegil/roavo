@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import { ShowOnMapButton } from "@/features/maps/components/show-on-map-button";
 import type { TripDetailDto } from "@/features/trips/dto";
 import { formatTripStatus } from "@/lib/i18n/trip-labels";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,6 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
   const [selectedDayId, setSelectedDayId] = useState(initialTrip.days[0]?.id ?? "");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
   const [generating, setGenerating] = useState(false);
 
   const orderedDays = useMemo(
@@ -43,6 +43,23 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
   const totalItems = useMemo(
     () => trip.days.reduce((sum, day) => sum + day.items.length, 0),
     [trip.days],
+  );
+
+  const mapPins = useMemo(
+    () =>
+      (selectedDay?.items ?? [])
+        .filter(
+          (item) =>
+            item.latitude != null && item.longitude != null && item.type !== "NOTE",
+        )
+        .map((item) => ({
+          id: item.id,
+          name: item.title,
+          latitude: item.latitude!,
+          longitude: item.longitude!,
+          subtitle: item.locationName,
+        })),
+    [selectedDay],
   );
 
   const readOnly = trip.status === "ARCHIVED";
@@ -85,9 +102,7 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
     const applyPayload = await applyResponse.json().catch(() => null);
     setGenerating(false);
     if (!applyResponse.ok) {
-      setError(
-        applyPayload?.error?.message ?? "Günlük program uygulanamadı.",
-      );
+      setError(applyPayload?.error?.message ?? "Günlük program uygulanamadı.");
       return;
     }
     if (applyPayload?.trip) {
@@ -101,7 +116,7 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
   return (
     <section className="space-y-6">
       <div className="space-y-3">
-        <p className="text-caption uppercase tracking-[0.14em]">
+        <p className="text-caption tracking-[0.14em] uppercase">
           {formatTripStatus(trip.status)}
         </p>
         <h1 className="text-heading">{trip.title}</h1>
@@ -111,7 +126,7 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
         </p>
         {!readOnly ? (
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={savePlan} disabled={pending || generating}>
+            <Button type="button" onClick={savePlan} disabled={generating}>
               Gezilerime dön
             </Button>
             {totalItems === 0 ? (
@@ -119,11 +134,9 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
                 type="button"
                 variant="outline"
                 onClick={() => void regeneratePlan()}
-                disabled={pending || generating}
+                disabled={generating}
               >
-                {generating
-                  ? "Günlük programın hazırlanıyor…"
-                  : "Planı yeniden oluştur"}
+                {generating ? "Günlük programın hazırlanıyor…" : "Planı yeniden oluştur"}
               </Button>
             ) : null}
           </div>
@@ -184,6 +197,8 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
               </p>
             ) : null}
 
+            <ShowOnMapButton readyPins={mapPins} />
+
             <ul className="space-y-3">
               {selectedDay.items.map((item, index) => (
                 <li
@@ -197,17 +212,15 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
                   <div className="space-y-2">
                     <p className="font-medium">{item.title}</p>
                     {item.locationName ? (
-                      <p className="text-muted-foreground text-sm">
-                        {item.locationName}
-                      </p>
+                      <p className="text-muted-foreground text-sm">{item.locationName}</p>
                     ) : null}
                     {item.description ? (
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
                         {item.description}
                       </p>
                     ) : null}
                     {selectedDay.notes && index === 0 ? (
-                      <p className="text-muted-foreground whitespace-pre-wrap text-xs">
+                      <p className="text-muted-foreground text-xs whitespace-pre-wrap">
                         {selectedDay.notes}
                       </p>
                     ) : null}

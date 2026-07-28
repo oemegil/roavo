@@ -93,8 +93,7 @@ export async function previewPlanItineraryService(input: {
 
   const stopNames = cities.map((c) => c.nameTr).join(" · ");
   const originName = input.data.origin?.name ?? "Türkiye";
-  const title =
-    input.data.title?.trim() || `${originName} → ${stopNames}`;
+  const title = input.data.title?.trim() || `${originName} → ${stopNames}`;
   const primary = cities[0]!;
 
   const executed = await executeStructuredAiOperation({
@@ -141,7 +140,7 @@ export async function previewPlanItineraryService(input: {
       endDate: input.data.endDate,
       cityIds: input.data.cityIds,
       interests: input.data.interests,
-      prompt: "itinerary-generation:v3-guidebook-timed",
+      prompt: "itinerary-generation:v4-guidebook-places",
     }),
     domainValidate: (output) => {
       const parsed = generatedItinerarySchema.safeParse(output);
@@ -162,10 +161,7 @@ export async function previewPlanItineraryService(input: {
       for (let i = 0; i < dayDescriptors.length; i += 1) {
         const expected = dayDescriptors[i]!;
         const actual = parsed.data.days[i]!;
-        if (
-          actual.dayNumber !== expected.dayNumber ||
-          actual.date !== expected.date
-        ) {
+        if (actual.dayNumber !== expected.dayNumber || actual.date !== expected.date) {
           throw new AppError({
             code: "AI_DOMAIN_VALIDATION_FAILED",
             message: "Generated day dates or numbers do not match the trip.",

@@ -7,6 +7,7 @@ import type { FlightOptionDto } from "@/integrations/flights/types";
 import { PLAN_CATEGORY_OPTIONS } from "@/features/plan/categories";
 import { PlanLoadingMessages } from "@/features/plan/components/plan-loading-messages";
 import { TurkishDateRangeField } from "@/features/plan/components/turkish-date-field";
+import { ShowOnMapButton } from "@/features/maps/components/show-on-map-button";
 import type { TravelInterest } from "@/server/domain/trips/constants";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,13 @@ type City = {
   regionId?: string;
   countryId?: string;
 };
-type Origin = { id: string; name: string; nameTr: string; countryCode: string; iata: string };
+type Origin = {
+  id: string;
+  name: string;
+  nameTr: string;
+  countryCode: string;
+  iata: string;
+};
 
 type Mode = "tickets" | "plan" | "manual";
 
@@ -71,15 +78,11 @@ function formatCarrierSummary(option: FlightOptionDto) {
   return outbound || inbound || null;
 }
 
-function formatLegLine(
-  label: string,
-  leg: FlightOptionDto["outbound"],
-) {
+function formatLegLine(label: string, leg: FlightOptionDto["outbound"]) {
   const depart = formatFlightClock(leg.departureTime);
   const arrive = formatFlightClock(leg.arrivalTime);
   const duration = formatFlightDuration(leg.durationMinutes);
-  const times =
-    depart && arrive ? `${depart} → ${arrive}` : depart || arrive || null;
+  const times = depart && arrive ? `${depart} → ${arrive}` : depart || arrive || null;
   const stops =
     leg.stops <= 0
       ? "Direkt"
@@ -128,6 +131,7 @@ export function TripPlanWizard() {
       scheduleText: string;
       eventsHighlight: string | null;
       notes: string | null;
+      places?: Array<{ name: string; city?: string | null }>;
     }>;
   } | null>(null);
   const [selectedPreviewDay, setSelectedPreviewDay] = useState(0);
@@ -200,32 +204,19 @@ export function TripPlanWizard() {
   }, [startDate, endDate]);
 
   function dayCityLabel(date: string) {
-    const ids = manualDayCityIds[date] ?? [];
+    const ids = (manualDayCityIds[date] ?? []).filter((id) =>
+      selectedCityIds.includes(id),
+    );
     return ids
       .map((id) => selectedCities.find((city) => city.id === id)?.nameTr)
       .filter(Boolean)
       .join("-");
   }
 
-  useEffect(() => {
-    if (manualSelectedDayIndex >= manualDayList.length) {
-      setManualSelectedDayIndex(Math.max(0, manualDayList.length - 1));
-    }
-  }, [manualDayList.length, manualSelectedDayIndex]);
-
-  useEffect(() => {
-    const allowed = new Set(selectedCityIds);
-    setManualDayCityIds((prev) => {
-      let changed = false;
-      const next: Record<string, string[]> = {};
-      for (const [date, ids] of Object.entries(prev)) {
-        const filtered = ids.filter((id) => allowed.has(id));
-        if (filtered.length !== ids.length) changed = true;
-        next[date] = filtered;
-      }
-      return changed ? next : prev;
-    });
-  }, [selectedCityIds]);
+  const safeManualDayIndex = Math.min(
+    manualSelectedDayIndex,
+    Math.max(0, manualDayList.length - 1),
+  );
 
   function resetModeForm() {
     setStartDate("");
@@ -341,8 +332,7 @@ export function TripPlanWizard() {
       setError("Geçerli bir tarih aralığı seç.");
       return;
     }
-    const regionWide =
-      Boolean(selectedRegion) && selectedCityIds.length === 0;
+    const regionWide = Boolean(selectedRegion) && selectedCityIds.length === 0;
     if (!regionWide && selectedCityIds.length === 0) {
       setError("En az bir şehir seç veya bir bölge seçip popüler destinasyonları ara.");
       return;
@@ -492,10 +482,7 @@ export function TripPlanWizard() {
         ...buildPlanPayload(Boolean(selectedFlight)),
         generateItinerary: false,
         itinerary: planPreview,
-        title:
-          planTitle.trim() ||
-          planPreview.titleSuggestion ||
-          undefined,
+        title: planTitle.trim() || planPreview.titleSuggestion || undefined,
       }),
     });
     const payload = await response.json().catch(() => null);
@@ -716,9 +703,7 @@ export function TripPlanWizard() {
             <div className="border-border bg-muted/30 space-y-2 rounded-xl border p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 space-y-1">
-                  <p className="text-caption uppercase tracking-[0.12em]">
-                    Seçili uçuş
-                  </p>
+                  <p className="text-caption tracking-[0.12em] uppercase">Seçili uçuş</p>
                   <p className="font-medium">{selectedFlight.routeSummary}</p>
                   {formatCarrierSummary(selectedFlight) ? (
                     <p className="text-sm">{formatCarrierSummary(selectedFlight)}</p>
@@ -746,7 +731,7 @@ export function TripPlanWizard() {
             </div>
           ) : null}
 
-          <div id="plan-preferences" className="space-y-4 scroll-mt-24">
+          <div id="plan-preferences" className="scroll-mt-24 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="planTitle">Plan adı (isteğe bağlı)</Label>
               <Input
@@ -767,9 +752,7 @@ export function TripPlanWizard() {
                     key={option.value}
                     type="button"
                     size="sm"
-                    variant={
-                      interests.includes(option.value) ? "default" : "outline"
-                    }
+                    variant={interests.includes(option.value) ? "default" : "outline"}
                     onClick={() => toggleInterest(option.value)}
                   >
                     {option.label}
@@ -810,7 +793,7 @@ export function TripPlanWizard() {
                         type="button"
                         onClick={() => setManualSelectedDayIndex(index)}
                         className={`rounded-lg border px-3 py-2 text-sm whitespace-nowrap ${
-                          manualSelectedDayIndex === index
+                          safeManualDayIndex === index
                             ? "bg-primary text-primary-foreground border-primary"
                             : "border-border"
                         }`}
@@ -824,21 +807,22 @@ export function TripPlanWizard() {
               </div>
 
               {(() => {
-                const date = manualDayList[manualSelectedDayIndex];
+                const date = manualDayList[safeManualDayIndex];
                 if (!date) return null;
                 const cityLabel = dayCityLabel(date);
-                const dayCities = manualDayCityIds[date] ?? [];
+                const dayCities = (manualDayCityIds[date] ?? []).filter((id) =>
+                  selectedCityIds.includes(id),
+                );
                 return (
                   <div className="space-y-3">
                     <div>
                       <Label>
-                        Gün {manualSelectedDayIndex + 1}
+                        Gün {safeManualDayIndex + 1}
                         {cityLabel ? ` · ${cityLabel}` : ""} — {date}
                       </Label>
                       <p className="text-muted-foreground mt-1 text-xs">
-                        Bu gün için şehir(leri) sen seç. Geçiş gününde birden
-                        fazla işaretleyebilirsin (ör. Madrid + Sevilla →
-                        Madrid-Sevilla).
+                        Bu gün için şehir(leri) sen seç. Geçiş gününde birden fazla
+                        işaretleyebilirsin (ör. Madrid + Sevilla → Madrid-Sevilla).
                       </p>
                     </div>
 
@@ -881,8 +865,8 @@ export function TripPlanWizard() {
                       }
                     />
                     <p className="text-muted-foreground text-xs">
-                      Yukarıdan diğer günlere geçip tek tek doldurabilirsin.
-                      Kayıt yalnızca “Geziyi kaydet” ile yapılır.
+                      Yukarıdan diğer günlere geçip tek tek doldurabilirsin. Kayıt
+                      yalnızca “Geziyi kaydet” ile yapılır.
                     </p>
                   </div>
                 );
@@ -927,8 +911,7 @@ export function TripPlanWizard() {
                   <div className="flex items-start justify-between gap-3">
                     <p className="font-medium">{option.routeSummary}</p>
                     <p className="shrink-0 text-sm font-semibold">
-                      {option.priceAmount.toLocaleString("tr-TR")}{" "}
-                      {option.priceCurrency}
+                      {option.priceAmount.toLocaleString("tr-TR")} {option.priceCurrency}
                     </p>
                   </div>
                   {carrierSummary ? (
@@ -966,7 +949,7 @@ export function TripPlanWizard() {
       {mode === "plan" && planPreview ? (
         <div className="border-border space-y-4 rounded-2xl border p-4">
           <div className="space-y-1">
-            <p className="text-caption uppercase tracking-[0.12em]">Önizleme</p>
+            <p className="text-caption tracking-[0.12em] uppercase">Önizleme</p>
             <h2 className="text-lg font-semibold">
               {planPreview.titleSuggestion || planTitle || "Gezi planı"}
             </h2>
@@ -976,9 +959,7 @@ export function TripPlanWizard() {
             {planPreview.warnings.length > 0 ? (
               <Alert>
                 <AlertTitle>Not</AlertTitle>
-                <AlertDescription>
-                  {planPreview.warnings.join(" · ")}
-                </AlertDescription>
+                <AlertDescription>{planPreview.warnings.join(" · ")}</AlertDescription>
               </Alert>
             ) : null}
             <p className="text-muted-foreground text-xs">
@@ -1019,9 +1000,20 @@ export function TripPlanWizard() {
                   {planPreview.days[selectedPreviewDay]!.date}
                 </p>
               </div>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">
                 {planPreview.days[selectedPreviewDay]!.scheduleText}
               </p>
+              <ShowOnMapButton
+                places={(planPreview.days[selectedPreviewDay]!.places ?? []).map(
+                  (place) => ({
+                    name: place.name,
+                    city:
+                      place.city ??
+                      planPreview.days[selectedPreviewDay]!.cityName ??
+                      null,
+                  }),
+                )}
+              />
               {planPreview.days[selectedPreviewDay]!.eventsHighlight ? (
                 <div className="rounded-xl border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
                   <p className="font-medium">Etkinlik notu</p>
@@ -1059,7 +1051,7 @@ export function TripPlanWizard() {
                 <summary className="cursor-pointer text-xs font-medium">
                   AI debug (prompt / yanıt)
                 </summary>
-                <pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-black/10 p-3 text-[11px] leading-relaxed">
+                <pre className="mt-2 max-h-80 overflow-auto rounded-md bg-black/10 p-3 text-[11px] leading-relaxed whitespace-pre-wrap">
                   {errorDebug}
                 </pre>
               </details>

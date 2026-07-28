@@ -16,6 +16,10 @@ import {
 } from "@/server/domain/ai/fingerprint";
 import { formatDateOnly } from "@/server/domain/trips/date-only";
 import { requireMutableOwnedTrip } from "@/server/application/trips/get-trip";
+import {
+  geocodeGeneratedItineraryPlaces,
+  persistGeneratedItinerary,
+} from "@/server/application/plan/persist-generated-itinerary";
 import { toTripDetailDto } from "@/features/trips/dto";
 import {
   countUserAiOperationsToday,
@@ -311,81 +315,27 @@ export async function applyItineraryPreviewService(input: {
   const orderedDays = [...trip.days].sort((a, b) => a.position - b.position);
 
   try {
+    const geocodedPlaces = await geocodeGeneratedItineraryPlaces(payload);
+
     await prisma.$transaction(
       async (tx) => {
-        const itemCreates: Array<{
-          tripDayId: string;
-          type: "NOTE";
-          title: string;
-          description: string;
-          locationName: string | null;
-          currencyCode: string;
-          position: number;
-          source: "AI_GENERATED";
-        }> = [];
-
-        for (let i = 0; i < orderedDays.length; i += 1) {
-          const day = orderedDays[i]!;
-          const generatedDay = payload.days[i]!;
-          if (!generatedDay) continue;
-
-          const eventsBlock = generatedDay.eventsHighlight?.trim()
-            ? `\n\n── Etkinlik notu ──\n${generatedDay.eventsHighlight.trim()}`
-            : "";
-          const dayNotes =
-            [generatedDay.notes?.trim(), eventsBlock.trim()]
-              .filter(Boolean)
-              .join("\n\n") || null;
-
-          await tx.tripDay.update({
-            where: { id: day.id },
-            data: {
-              title: generatedDay.theme
-                ? generatedDay.cityName
-                  ? `${generatedDay.theme} · ${generatedDay.cityName}`
-                  : generatedDay.theme
-                : day.title,
-              notes: dayNotes ?? day.notes,
-            },
-          });
-
-          itemCreates.push({
-            tripDayId: day.id,
-            type: "NOTE",
-            title: generatedDay.cityName
-              ? `${generatedDay.cityName} — günün programı`
-              : "Günün programı",
-            description: generatedDay.scheduleText,
-            locationName: generatedDay.cityName ?? null,
-            currencyCode: trip.currencyCode,
-            position: 0,
-            source: "AI_GENERATED",
-          });
-
-          if (generatedDay.eventsHighlight?.trim()) {
-            itemCreates.push({
-              tripDayId: day.id,
-              type: "NOTE",
-              title: "Bu tarihlerde dikkat: etkinlikler",
-              description: generatedDay.eventsHighlight.trim(),
-              locationName: generatedDay.cityName ?? null,
-              currencyCode: trip.currencyCode,
-              position: 1,
-              source: "AI_GENERATED",
-            });
-          }
-        }
-
-        if (itemCreates.length > 0) {
-          await tx.itineraryItem.createMany({ data: itemCreates });
-        }
+        await persistGeneratedItinerary(tx, {
+          days: orderedDays.map((day) => ({
+            id: day.id,
+            title: day.title,
+            notes: day.notes,
+          })),
+          itinerary: payload,
+          currencyCode: trip.currencyCode,
+          geocodedPlaces,
+        });
 
         await tx.aiPreview.update({
           where: { id: preview.id },
           data: { status: "APPLIED", appliedAt: new Date() },
         });
       },
-      { timeout: 30_000, maxWait: 10_000 },
+      { timeout: 60_000, maxWait: 10_000 },
     );
   } catch (error) {
     throw new AppError({
