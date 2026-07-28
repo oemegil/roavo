@@ -1,6 +1,8 @@
 /**
  * One-off demo seed: Little Prince user + a public trip for Keşfet.
  * Usage: pnpm exec tsx scripts/seed-little-prince.ts
+ *
+ * Login: little.prince@roavo.demo / prince1234  (@littleprince)
  */
 import { hash } from "@node-rs/argon2";
 import { PrismaClient } from "@prisma/client";

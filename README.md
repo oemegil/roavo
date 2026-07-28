@@ -73,19 +73,37 @@ Guide: [docs/development/supabase.md](docs/development/supabase.md)
 pnpm dev
 ```
 
+## Demo accounts
+
+Seed scripts create public travelers for Keşfet. Re-run anytime:
+
+```bash
+pnpm exec tsx scripts/seed-little-prince.ts
+pnpm exec tsx scripts/seed-demo-travelers.ts
+```
+
+| Name           | Username        | Email                       | Password     |
+| -------------- | --------------- | --------------------------- | ------------ |
+| Little Prince  | `@littleprince` | `little.prince@roavo.demo`  | `prince1234` |
+| Elif Deniz     | `@elifdeniz`    | `elif.deniz@roavo.demo`     | `demo1234`   |
+| Marco Rossi    | `@marcorossi`   | `marco.rossi@roavo.demo`    | `demo1234`   |
+| Ayla Kaya      | `@aylakaya`     | `ayla.kaya@roavo.demo`      | `demo1234`   |
+| Kenji Watanabe | `@kenjiw`       | `kenji.watanabe@roavo.demo` | `demo1234`   |
+| Sofia Almeida  | `@sofiaalmeida` | `sofia.almeida@roavo.demo`  | `demo1234`   |
+
 ## Available scripts
 
-| Script | Purpose |
-|--------|---------|
-| `pnpm dev` | Development server |
-| `pnpm build` | Production build |
-| `pnpm start` | Start production server |
-| `pnpm lint` / `lint:fix` | ESLint |
-| `pnpm format` / `format:check` | Prettier |
-| `pnpm typecheck` | TypeScript |
-| `pnpm test` | Unit / component tests |
-| `pnpm test:e2e` | Playwright smoke |
-| `pnpm db:*` | Prisma generate / migrate / studio / validate / seed |
+| Script                         | Purpose                                              |
+| ------------------------------ | ---------------------------------------------------- |
+| `pnpm dev`                     | Development server                                   |
+| `pnpm build`                   | Production build                                     |
+| `pnpm start`                   | Start production server                              |
+| `pnpm lint` / `lint:fix`       | ESLint                                               |
+| `pnpm format` / `format:check` | Prettier                                             |
+| `pnpm typecheck`               | TypeScript                                           |
+| `pnpm test`                    | Unit / component tests                               |
+| `pnpm test:e2e`                | Playwright smoke                                     |
+| `pnpm db:*`                    | Prisma generate / migrate / studio / validate / seed |
 
 ## Testing
 
@@ -110,16 +128,16 @@ See [docs/development/deployment.md](docs/development/deployment.md).
 
 ## Current implementation status
 
-| Area | Status |
-|------|--------|
-| Next.js app shell | Done |
-| Auth (register / login / logout / session) | Done |
-| Profile view / edit / account deletion | Done |
-| Trip domain & manual itinerary editor | Done |
-| Destination catalog, search, detail, Trip selection | Done |
-| AI destination recommendations + itinerary generate/edit | Done |
-| Password reset | Deferred |
-| Maps / Places / public social features | Not started |
+| Area                                                     | Status      |
+| -------------------------------------------------------- | ----------- |
+| Next.js app shell                                        | Done        |
+| Auth (register / login / logout / session)               | Done        |
+| Profile view / edit / account deletion                   | Done        |
+| Trip domain & manual itinerary editor                    | Done        |
+| Destination catalog, search, detail, Trip selection      | Done        |
+| AI destination recommendations + itinerary generate/edit | Done        |
+| Password reset                                           | Deferred    |
+| Maps / Places / public social features                   | Not started |
 
 ## Docs
 

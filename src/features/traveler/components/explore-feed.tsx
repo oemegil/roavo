@@ -362,19 +362,25 @@ export function ExploreFeedClient() {
               </div>
 
               <div className="relative px-4 pb-3">
-                <div className="flex min-h-44 flex-col justify-end rounded-xl bg-gradient-to-br from-slate-900 via-slate-700 to-amber-600 p-5 text-white shadow-inner">
-                  <p className="text-[11px] tracking-[0.18em] uppercase opacity-80">
-                    {trip.dayCount} gün · {placeLine}
-                  </p>
-                  <h2 className="font-display mt-2 text-2xl leading-tight font-semibold">
-                    {trip.title}
-                  </h2>
-                  {trip.description ? (
-                    <p className="mt-2 line-clamp-3 text-sm text-white/85">
-                      {trip.description}
+                <Link
+                  href={`/explore/${trip.id}`}
+                  className="focus-visible:ring-ring block rounded-xl outline-none focus-visible:ring-2"
+                  aria-label={`${trip.title} planını aç`}
+                >
+                  <div className="flex min-h-44 flex-col justify-end rounded-xl bg-gradient-to-br from-slate-900 via-slate-700 to-amber-600 p-5 text-white shadow-inner transition-opacity hover:opacity-95">
+                    <p className="text-[11px] tracking-[0.18em] uppercase opacity-80">
+                      {trip.dayCount} gün · {placeLine}
                     </p>
-                  ) : null}
-                </div>
+                    <h2 className="font-display mt-2 text-2xl leading-tight font-semibold">
+                      {trip.title}
+                    </h2>
+                    {trip.description ? (
+                      <p className="mt-2 line-clamp-3 text-sm text-white/85">
+                        {trip.description}
+                      </p>
+                    ) : null}
+                  </div>
+                </Link>
               </div>
 
               <div className="flex items-center gap-1 px-2 pb-1">
@@ -410,8 +416,18 @@ export function ExploreFeedClient() {
 
               <div className="space-y-2 px-4 pb-3">
                 <p className="text-sm">
-                  <span className="font-semibold">{trip.owner.username}</span>{" "}
-                  <span className="text-foreground/90">{trip.title}</span>
+                  <Link
+                    href={`/u/${trip.owner.username}`}
+                    className="font-semibold hover:underline"
+                  >
+                    {trip.owner.username}
+                  </Link>{" "}
+                  <Link
+                    href={`/explore/${trip.id}`}
+                    className="text-foreground/90 hover:underline"
+                  >
+                    {trip.title}
+                  </Link>
                 </p>
 
                 {trip.recentComments.length > 0 ? (
