@@ -170,6 +170,12 @@ export async function listPendingFollowRequests(input: {
   };
 }
 
+export async function countPendingFollowRequests(userId: string) {
+  return prisma.userFollow.count({
+    where: { followingId: userId, status: "PENDING" },
+  });
+}
+
 export async function acceptFollowRequest(input: { userId: string; requestId: string }) {
   const row = await prisma.userFollow.findFirst({
     where: {

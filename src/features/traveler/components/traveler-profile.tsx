@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { getInitials } from "@/features/auth/types";
+import { followRequestCountQueryKey } from "@/features/traveler/query-keys";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,6 +60,7 @@ function ProfileAvatar({ name, avatarUrl }: { name: string; avatarUrl: string | 
 }
 
 export function TravelerProfileClient() {
+  const queryClient = useQueryClient();
   const [profile, setProfile] = useState<TravelerProfile | null>(null);
   const [requests, setRequests] = useState<FollowRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -124,6 +127,7 @@ export function TravelerProfileClient() {
     if (visibility === "PUBLIC") {
       setRequests([]);
     }
+    void queryClient.invalidateQueries({ queryKey: followRequestCountQueryKey });
   }
 
   async function acceptRequest(requestId: string) {
@@ -147,6 +151,7 @@ export function TravelerProfileClient() {
           }
         : prev,
     );
+    void queryClient.invalidateQueries({ queryKey: followRequestCountQueryKey });
   }
 
   async function rejectRequest(requestId: string) {
@@ -169,6 +174,7 @@ export function TravelerProfileClient() {
           }
         : prev,
     );
+    void queryClient.invalidateQueries({ queryKey: followRequestCountQueryKey });
   }
 
   if (loading) {
@@ -299,7 +305,7 @@ export function TravelerProfileClient() {
       ) : null}
 
       {requests.length > 0 ? (
-        <div className="relative space-y-3">
+        <div id="follow-requests" className="relative scroll-mt-24 space-y-3">
           <div className="space-y-1">
             <p className="text-caption tracking-[0.14em] uppercase">Bekleyen istekler</p>
             <p className="text-muted-foreground text-sm">
