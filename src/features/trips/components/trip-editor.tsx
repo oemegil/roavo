@@ -148,7 +148,7 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
             ) : null}
           </div>
         ) : null}
-        <ShowOnMapButton readyPins={mapPins} planTitle={trip.title} />
+        <ShowOnMapButton readyPins={mapPins} />
       </div>
 
       {error ? (

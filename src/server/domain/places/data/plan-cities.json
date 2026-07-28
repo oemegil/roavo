@@ -1,0 +1,2676 @@
+[
+  {
+    "id": "aarhus",
+    "name": "Aarhus",
+    "nameTr": "Aarhus",
+    "countryCode": "DK",
+    "latitude": 56.16,
+    "longitude": 10.2,
+    "nearestAirportIata": "AAR"
+  },
+  {
+    "id": "abu-dhabi",
+    "name": "Abu Dhabi",
+    "nameTr": "Abu Dabi",
+    "countryCode": "AE",
+    "latitude": 24.45,
+    "longitude": 54.38,
+    "nearestAirportIata": "AUH"
+  },
+  {
+    "id": "aix-en-provence",
+    "name": "Aix-en-Provence",
+    "nameTr": "Aix-en-Provence",
+    "countryCode": "FR",
+    "latitude": 43.53,
+    "longitude": 5.45
+  },
+  {
+    "id": "corsica-ajaccio",
+    "name": "Ajaccio",
+    "nameTr": "Ajaccio",
+    "countryCode": "FR",
+    "latitude": 41.93,
+    "longitude": 8.74,
+    "nearestAirportIata": "AJA"
+  },
+  {
+    "id": "alicante",
+    "name": "Alicante",
+    "nameTr": "Alicante",
+    "countryCode": "ES",
+    "latitude": 38.35,
+    "longitude": -0.49,
+    "nearestAirportIata": "ALC"
+  },
+  {
+    "id": "amalfi",
+    "name": "Amalfi",
+    "nameTr": "Amalfi",
+    "countryCode": "IT",
+    "latitude": 40.63,
+    "longitude": 14.6
+  },
+  {
+    "id": "amman",
+    "name": "Amman",
+    "nameTr": "Amman",
+    "countryCode": "JO",
+    "latitude": 31.95,
+    "longitude": 35.93,
+    "nearestAirportIata": "AMM"
+  },
+  {
+    "id": "amsterdam",
+    "name": "Amsterdam",
+    "nameTr": "Amsterdam",
+    "countryCode": "NL",
+    "latitude": 52.37,
+    "longitude": 4.9,
+    "nearestAirportIata": "AMS"
+  },
+  {
+    "id": "andorra",
+    "name": "Andorra la Vella",
+    "nameTr": "Andorra",
+    "countryCode": "AD",
+    "latitude": 42.51,
+    "longitude": 1.52
+  },
+  {
+    "id": "ankara",
+    "name": "Ankara",
+    "nameTr": "Ankara",
+    "countryCode": "TR",
+    "latitude": 39.93,
+    "longitude": 32.86,
+    "nearestAirportIata": "ESB"
+  },
+  {
+    "id": "annecy",
+    "name": "Annecy",
+    "nameTr": "Annecy",
+    "countryCode": "FR",
+    "latitude": 45.9,
+    "longitude": 6.13
+  },
+  {
+    "id": "antalya",
+    "name": "Antalya",
+    "nameTr": "Antalya",
+    "countryCode": "TR",
+    "latitude": 36.9,
+    "longitude": 30.71,
+    "nearestAirportIata": "AYT"
+  },
+  {
+    "id": "antwerp",
+    "name": "Antwerp",
+    "nameTr": "Anvers",
+    "countryCode": "BE",
+    "latitude": 51.22,
+    "longitude": 4.4,
+    "nearestAirportIata": "ANR"
+  },
+  {
+    "id": "aswan",
+    "name": "Aswan",
+    "nameTr": "Asvan",
+    "countryCode": "EG",
+    "latitude": 24.09,
+    "longitude": 32.9,
+    "nearestAirportIata": "ASW"
+  },
+  {
+    "id": "athens",
+    "name": "Athens",
+    "nameTr": "Atina",
+    "countryCode": "GR",
+    "latitude": 37.98,
+    "longitude": 23.73,
+    "nearestAirportIata": "ATH"
+  },
+  {
+    "id": "auckland",
+    "name": "Auckland",
+    "nameTr": "Auckland",
+    "countryCode": "NZ",
+    "latitude": -36.85,
+    "longitude": 174.76,
+    "nearestAirportIata": "AKL"
+  },
+  {
+    "id": "austin",
+    "name": "Austin",
+    "nameTr": "Austin",
+    "countryCode": "US",
+    "latitude": 30.27,
+    "longitude": -97.74,
+    "nearestAirportIata": "AUS"
+  },
+  {
+    "id": "avignon",
+    "name": "Avignon",
+    "nameTr": "Avignon",
+    "countryCode": "FR",
+    "latitude": 43.95,
+    "longitude": 4.81
+  },
+  {
+    "id": "paphos",
+    "name": "Paphos",
+    "nameTr": "Baf",
+    "countryCode": "CY",
+    "latitude": 34.78,
+    "longitude": 32.42,
+    "nearestAirportIata": "PFO"
+  },
+  {
+    "id": "baku",
+    "name": "Baku",
+    "nameTr": "Bakü",
+    "countryCode": "AZ",
+    "latitude": 40.41,
+    "longitude": 49.87,
+    "nearestAirportIata": "GYD"
+  },
+  {
+    "id": "bali",
+    "name": "Denpasar",
+    "nameTr": "Bali",
+    "countryCode": "ID",
+    "latitude": -8.67,
+    "longitude": 115.21,
+    "nearestAirportIata": "DPS"
+  },
+  {
+    "id": "banff",
+    "name": "Banff",
+    "nameTr": "Banff",
+    "countryCode": "CA",
+    "latitude": 51.18,
+    "longitude": -115.57
+  },
+  {
+    "id": "bangkok",
+    "name": "Bangkok",
+    "nameTr": "Bangkok",
+    "countryCode": "TH",
+    "latitude": 13.76,
+    "longitude": 100.5,
+    "nearestAirportIata": "BKK"
+  },
+  {
+    "id": "bari",
+    "name": "Bari",
+    "nameTr": "Bari",
+    "countryCode": "IT",
+    "latitude": 41.12,
+    "longitude": 16.87,
+    "nearestAirportIata": "BRI"
+  },
+  {
+    "id": "barcelona",
+    "name": "Barcelona",
+    "nameTr": "Barselona",
+    "countryCode": "ES",
+    "latitude": 41.39,
+    "longitude": 2.17,
+    "nearestAirportIata": "BCN"
+  },
+  {
+    "id": "basel",
+    "name": "Basel",
+    "nameTr": "Basel",
+    "countryCode": "CH",
+    "latitude": 47.56,
+    "longitude": 7.59,
+    "nearestAirportIata": "BSL"
+  },
+  {
+    "id": "bath",
+    "name": "Bath",
+    "nameTr": "Bath",
+    "countryCode": "GB",
+    "latitude": 51.38,
+    "longitude": -2.36
+  },
+  {
+    "id": "batumi",
+    "name": "Batumi",
+    "nameTr": "Batum",
+    "countryCode": "GE",
+    "latitude": 41.65,
+    "longitude": 41.64,
+    "nearestAirportIata": "BUS"
+  },
+  {
+    "id": "belfast",
+    "name": "Belfast",
+    "nameTr": "Belfast",
+    "countryCode": "GB",
+    "latitude": 54.6,
+    "longitude": -5.93,
+    "nearestAirportIata": "BFS"
+  },
+  {
+    "id": "belgrade",
+    "name": "Belgrade",
+    "nameTr": "Belgrad",
+    "countryCode": "RS",
+    "latitude": 44.82,
+    "longitude": 20.46,
+    "nearestAirportIata": "BEG"
+  },
+  {
+    "id": "berat",
+    "name": "Berat",
+    "nameTr": "Berat",
+    "countryCode": "AL",
+    "latitude": 40.71,
+    "longitude": 19.95
+  },
+  {
+    "id": "bergen",
+    "name": "Bergen",
+    "nameTr": "Bergen",
+    "countryCode": "NO",
+    "latitude": 60.39,
+    "longitude": 5.32,
+    "nearestAirportIata": "BGO"
+  },
+  {
+    "id": "berlin",
+    "name": "Berlin",
+    "nameTr": "Berlin",
+    "countryCode": "DE",
+    "latitude": 52.52,
+    "longitude": 13.41,
+    "nearestAirportIata": "BER"
+  },
+  {
+    "id": "bern",
+    "name": "Bern",
+    "nameTr": "Bern",
+    "countryCode": "CH",
+    "latitude": 46.95,
+    "longitude": 7.45,
+    "nearestAirportIata": "BRN"
+  },
+  {
+    "id": "biarritz",
+    "name": "Biarritz",
+    "nameTr": "Biarritz",
+    "countryCode": "FR",
+    "latitude": 43.48,
+    "longitude": -1.56,
+    "nearestAirportIata": "BIQ"
+  },
+  {
+    "id": "bilbao",
+    "name": "Bilbao",
+    "nameTr": "Bilbao",
+    "countryCode": "ES",
+    "latitude": 43.26,
+    "longitude": -2.93,
+    "nearestAirportIata": "BIO"
+  },
+  {
+    "id": "bled",
+    "name": "Bled",
+    "nameTr": "Bled",
+    "countryCode": "SI",
+    "latitude": 46.37,
+    "longitude": 14.11
+  },
+  {
+    "id": "bodrum",
+    "name": "Bodrum",
+    "nameTr": "Bodrum",
+    "countryCode": "TR",
+    "latitude": 37.03,
+    "longitude": 27.43,
+    "nearestAirportIata": "BJV"
+  },
+  {
+    "id": "bologna",
+    "name": "Bologna",
+    "nameTr": "Bologna",
+    "countryCode": "IT",
+    "latitude": 44.49,
+    "longitude": 11.34,
+    "nearestAirportIata": "BLQ"
+  },
+  {
+    "id": "bordeaux",
+    "name": "Bordeaux",
+    "nameTr": "Bordeaux",
+    "countryCode": "FR",
+    "latitude": 44.84,
+    "longitude": -0.58,
+    "nearestAirportIata": "BOD"
+  },
+  {
+    "id": "boston",
+    "name": "Boston",
+    "nameTr": "Boston",
+    "countryCode": "US",
+    "latitude": 42.36,
+    "longitude": -71.06,
+    "nearestAirportIata": "BOS"
+  },
+  {
+    "id": "brasov",
+    "name": "Brasov",
+    "nameTr": "Braşov",
+    "countryCode": "RO",
+    "latitude": 45.66,
+    "longitude": 25.61
+  },
+  {
+    "id": "bratislava",
+    "name": "Bratislava",
+    "nameTr": "Bratislava",
+    "countryCode": "SK",
+    "latitude": 48.15,
+    "longitude": 17.11,
+    "nearestAirportIata": "BTS"
+  },
+  {
+    "id": "brighton",
+    "name": "Brighton",
+    "nameTr": "Brighton",
+    "countryCode": "GB",
+    "latitude": 50.82,
+    "longitude": -0.14
+  },
+  {
+    "id": "brisbane",
+    "name": "Brisbane",
+    "nameTr": "Brisbane",
+    "countryCode": "AU",
+    "latitude": -27.47,
+    "longitude": 153.03,
+    "nearestAirportIata": "BNE"
+  },
+  {
+    "id": "bristol",
+    "name": "Bristol",
+    "nameTr": "Bristol",
+    "countryCode": "GB",
+    "latitude": 51.45,
+    "longitude": -2.59,
+    "nearestAirportIata": "BRS"
+  },
+  {
+    "id": "brno",
+    "name": "Brno",
+    "nameTr": "Brno",
+    "countryCode": "CZ",
+    "latitude": 49.2,
+    "longitude": 16.61,
+    "nearestAirportIata": "BRQ"
+  },
+  {
+    "id": "bruges",
+    "name": "Bruges",
+    "nameTr": "Brugge",
+    "countryCode": "BE",
+    "latitude": 51.21,
+    "longitude": 3.22
+  },
+  {
+    "id": "brussels",
+    "name": "Brussels",
+    "nameTr": "Brüksel",
+    "countryCode": "BE",
+    "latitude": 50.85,
+    "longitude": 4.35,
+    "nearestAirportIata": "BRU"
+  },
+  {
+    "id": "budapest",
+    "name": "Budapest",
+    "nameTr": "Budapeşte",
+    "countryCode": "HU",
+    "latitude": 47.5,
+    "longitude": 19.04,
+    "nearestAirportIata": "BUD"
+  },
+  {
+    "id": "budva",
+    "name": "Budva",
+    "nameTr": "Budva",
+    "countryCode": "ME",
+    "latitude": 42.29,
+    "longitude": 18.84
+  },
+  {
+    "id": "buenos-aires",
+    "name": "Buenos Aires",
+    "nameTr": "Buenos Aires",
+    "countryCode": "AR",
+    "latitude": -34.6,
+    "longitude": -58.38,
+    "nearestAirportIata": "EZE"
+  },
+  {
+    "id": "bursa",
+    "name": "Bursa",
+    "nameTr": "Bursa",
+    "countryCode": "TR",
+    "latitude": 40.19,
+    "longitude": 29.06
+  },
+  {
+    "id": "busan",
+    "name": "Busan",
+    "nameTr": "Busan",
+    "countryCode": "KR",
+    "latitude": 35.18,
+    "longitude": 129.08,
+    "nearestAirportIata": "PUS"
+  },
+  {
+    "id": "bucharest",
+    "name": "Bucharest",
+    "nameTr": "Bükreş",
+    "countryCode": "RO",
+    "latitude": 44.43,
+    "longitude": 26.1,
+    "nearestAirportIata": "OTP"
+  },
+  {
+    "id": "jakarta",
+    "name": "Jakarta",
+    "nameTr": "Cakarta",
+    "countryCode": "ID",
+    "latitude": -6.21,
+    "longitude": 106.85,
+    "nearestAirportIata": "CGK"
+  },
+  {
+    "id": "cambridge",
+    "name": "Cambridge",
+    "nameTr": "Cambridge",
+    "countryCode": "GB",
+    "latitude": 52.21,
+    "longitude": 0.12
+  },
+  {
+    "id": "cancun",
+    "name": "Cancun",
+    "nameTr": "Cancun",
+    "countryCode": "MX",
+    "latitude": 21.16,
+    "longitude": -86.85,
+    "nearestAirportIata": "CUN"
+  },
+  {
+    "id": "cannes",
+    "name": "Cannes",
+    "nameTr": "Cannes",
+    "countryCode": "FR",
+    "latitude": 43.55,
+    "longitude": 7.02
+  },
+  {
+    "id": "cape-town",
+    "name": "Cape Town",
+    "nameTr": "Cape Town",
+    "countryCode": "ZA",
+    "latitude": -33.92,
+    "longitude": 18.42,
+    "nearestAirportIata": "CPT"
+  },
+  {
+    "id": "capri",
+    "name": "Capri",
+    "nameTr": "Capri",
+    "countryCode": "IT",
+    "latitude": 40.55,
+    "longitude": 14.24
+  },
+  {
+    "id": "cardiff",
+    "name": "Cardiff",
+    "nameTr": "Cardiff",
+    "countryCode": "GB",
+    "latitude": 51.48,
+    "longitude": -3.18,
+    "nearestAirportIata": "CWL"
+  },
+  {
+    "id": "cascais",
+    "name": "Cascais",
+    "nameTr": "Cascais",
+    "countryCode": "PT",
+    "latitude": 38.7,
+    "longitude": -9.42
+  },
+  {
+    "id": "catania",
+    "name": "Catania",
+    "nameTr": "Catania",
+    "countryCode": "IT",
+    "latitude": 37.51,
+    "longitude": 15.09,
+    "nearestAirportIata": "CTA"
+  },
+  {
+    "id": "geneva",
+    "name": "Geneva",
+    "nameTr": "Cenevre",
+    "countryCode": "CH",
+    "latitude": 46.2,
+    "longitude": 6.14,
+    "nearestAirportIata": "GVA"
+  },
+  {
+    "id": "genoa",
+    "name": "Genoa",
+    "nameTr": "Cenova",
+    "countryCode": "IT",
+    "latitude": 44.41,
+    "longitude": 8.93,
+    "nearestAirportIata": "GOA"
+  },
+  {
+    "id": "cesky-krumlov",
+    "name": "Cesky Krumlov",
+    "nameTr": "Cesky Krumlov",
+    "countryCode": "CZ",
+    "latitude": 48.81,
+    "longitude": 14.32
+  },
+  {
+    "id": "chamonix",
+    "name": "Chamonix",
+    "nameTr": "Chamonix",
+    "countryCode": "FR",
+    "latitude": 45.92,
+    "longitude": 6.87
+  },
+  {
+    "id": "chefchaouen",
+    "name": "Chefchaouen",
+    "nameTr": "Chefchaouen",
+    "countryCode": "MA",
+    "latitude": 35.17,
+    "longitude": -5.27
+  },
+  {
+    "id": "chiang-mai",
+    "name": "Chiang Mai",
+    "nameTr": "Chiang Mai",
+    "countryCode": "TH",
+    "latitude": 18.79,
+    "longitude": 98.98,
+    "nearestAirportIata": "CNX"
+  },
+  {
+    "id": "chicago",
+    "name": "Chicago",
+    "nameTr": "Chicago",
+    "countryCode": "US",
+    "latitude": 41.88,
+    "longitude": -87.63,
+    "nearestAirportIata": "ORD"
+  },
+  {
+    "id": "jeddah",
+    "name": "Jeddah",
+    "nameTr": "Cidde",
+    "countryCode": "SA",
+    "latitude": 21.49,
+    "longitude": 39.19,
+    "nearestAirportIata": "JED"
+  },
+  {
+    "id": "cinque-terre",
+    "name": "Cinque Terre",
+    "nameTr": "Cinque Terre",
+    "countryCode": "IT",
+    "latitude": 44.13,
+    "longitude": 9.7
+  },
+  {
+    "id": "cluj",
+    "name": "Cluj-Napoca",
+    "nameTr": "Cluj",
+    "countryCode": "RO",
+    "latitude": 46.77,
+    "longitude": 23.59,
+    "nearestAirportIata": "CLJ"
+  },
+  {
+    "id": "coimbra",
+    "name": "Coimbra",
+    "nameTr": "Coimbra",
+    "countryCode": "PT",
+    "latitude": 40.2,
+    "longitude": -8.41
+  },
+  {
+    "id": "colmar",
+    "name": "Colmar",
+    "nameTr": "Colmar",
+    "countryCode": "FR",
+    "latitude": 48.08,
+    "longitude": 7.36
+  },
+  {
+    "id": "como",
+    "name": "Como",
+    "nameTr": "Como",
+    "countryCode": "IT",
+    "latitude": 45.81,
+    "longitude": 9.08
+  },
+  {
+    "id": "cordoba",
+    "name": "Cordoba",
+    "nameTr": "Cordoba",
+    "countryCode": "ES",
+    "latitude": 37.89,
+    "longitude": -4.78
+  },
+  {
+    "id": "cork",
+    "name": "Cork",
+    "nameTr": "Cork",
+    "countryCode": "IE",
+    "latitude": 51.9,
+    "longitude": -8.48,
+    "nearestAirportIata": "ORK"
+  },
+  {
+    "id": "cusco",
+    "name": "Cusco",
+    "nameTr": "Cusco",
+    "countryCode": "PE",
+    "latitude": -13.53,
+    "longitude": -71.97,
+    "nearestAirportIata": "CUZ"
+  },
+  {
+    "id": "da-nang",
+    "name": "Da Nang",
+    "nameTr": "Da Nang",
+    "countryCode": "VN",
+    "latitude": 16.05,
+    "longitude": 108.2,
+    "nearestAirportIata": "DAD"
+  },
+  {
+    "id": "delfi",
+    "name": "Delphi",
+    "nameTr": "Delfi",
+    "countryCode": "GR",
+    "latitude": 38.48,
+    "longitude": 22.5
+  },
+  {
+    "id": "denver",
+    "name": "Denver",
+    "nameTr": "Denver",
+    "countryCode": "US",
+    "latitude": 39.74,
+    "longitude": -104.99,
+    "nearestAirportIata": "DEN"
+  },
+  {
+    "id": "dijon",
+    "name": "Dijon",
+    "nameTr": "Dijon",
+    "countryCode": "FR",
+    "latitude": 47.32,
+    "longitude": 5.04
+  },
+  {
+    "id": "doha",
+    "name": "Doha",
+    "nameTr": "Doha",
+    "countryCode": "QA",
+    "latitude": 25.29,
+    "longitude": 51.53,
+    "nearestAirportIata": "DOH"
+  },
+  {
+    "id": "dresden",
+    "name": "Dresden",
+    "nameTr": "Dresden",
+    "countryCode": "DE",
+    "latitude": 51.05,
+    "longitude": 13.74,
+    "nearestAirportIata": "DRS"
+  },
+  {
+    "id": "dubai",
+    "name": "Dubai",
+    "nameTr": "Dubai",
+    "countryCode": "AE",
+    "latitude": 25.2,
+    "longitude": 55.27,
+    "nearestAirportIata": "DXB"
+  },
+  {
+    "id": "dublin",
+    "name": "Dublin",
+    "nameTr": "Dublin",
+    "countryCode": "IE",
+    "latitude": 53.35,
+    "longitude": -6.26,
+    "nearestAirportIata": "DUB"
+  },
+  {
+    "id": "dubrovnik",
+    "name": "Dubrovnik",
+    "nameTr": "Dubrovnik",
+    "countryCode": "HR",
+    "latitude": 42.65,
+    "longitude": 18.09,
+    "nearestAirportIata": "DBV"
+  },
+  {
+    "id": "dusseldorf",
+    "name": "Dusseldorf",
+    "nameTr": "Düsseldorf",
+    "countryCode": "DE",
+    "latitude": 51.23,
+    "longitude": 6.77,
+    "nearestAirportIata": "DUS"
+  },
+  {
+    "id": "edinburgh",
+    "name": "Edinburgh",
+    "nameTr": "Edinburgh",
+    "countryCode": "GB",
+    "latitude": 55.95,
+    "longitude": -3.19,
+    "nearestAirportIata": "EDI"
+  },
+  {
+    "id": "eger",
+    "name": "Eger",
+    "nameTr": "Eger",
+    "countryCode": "HU",
+    "latitude": 47.9,
+    "longitude": 20.37
+  },
+  {
+    "id": "yerevan",
+    "name": "Yerevan",
+    "nameTr": "Erivan",
+    "countryCode": "AM",
+    "latitude": 40.18,
+    "longitude": 44.51,
+    "nearestAirportIata": "EVN"
+  },
+  {
+    "id": "evora",
+    "name": "Evora",
+    "nameTr": "Evora",
+    "countryCode": "PT",
+    "latitude": 38.57,
+    "longitude": -7.91
+  },
+  {
+    "id": "faro",
+    "name": "Faro",
+    "nameTr": "Faro",
+    "countryCode": "PT",
+    "latitude": 37.02,
+    "longitude": -7.93,
+    "nearestAirportIata": "FAO"
+  },
+  {
+    "id": "fez",
+    "name": "Fez",
+    "nameTr": "Fes",
+    "countryCode": "MA",
+    "latitude": 34.02,
+    "longitude": -5,
+    "nearestAirportIata": "FEZ"
+  },
+  {
+    "id": "fethiye",
+    "name": "Fethiye",
+    "nameTr": "Fethiye",
+    "countryCode": "TR",
+    "latitude": 36.65,
+    "longitude": 29.13
+  },
+  {
+    "id": "plovdiv",
+    "name": "Plovdiv",
+    "nameTr": "Filibe",
+    "countryCode": "BG",
+    "latitude": 42.14,
+    "longitude": 24.75
+  },
+  {
+    "id": "florence",
+    "name": "Florence",
+    "nameTr": "Floransa",
+    "countryCode": "IT",
+    "latitude": 43.77,
+    "longitude": 11.25,
+    "nearestAirportIata": "FLR"
+  },
+  {
+    "id": "frankfurt",
+    "name": "Frankfurt",
+    "nameTr": "Frankfurt",
+    "countryCode": "DE",
+    "latitude": 50.11,
+    "longitude": 8.68,
+    "nearestAirportIata": "FRA"
+  },
+  {
+    "id": "fussen",
+    "name": "Fussen",
+    "nameTr": "Füssen",
+    "countryCode": "DE",
+    "latitude": 47.57,
+    "longitude": 10.7
+  },
+  {
+    "id": "galway",
+    "name": "Galway",
+    "nameTr": "Galway",
+    "countryCode": "IE",
+    "latitude": 53.27,
+    "longitude": -9.05
+  },
+  {
+    "id": "gaziantep",
+    "name": "Gaziantep",
+    "nameTr": "Gaziantep",
+    "countryCode": "TR",
+    "latitude": 37.07,
+    "longitude": 37.38,
+    "nearestAirportIata": "GZT"
+  },
+  {
+    "id": "gdansk",
+    "name": "Gdansk",
+    "nameTr": "Gdansk",
+    "countryCode": "PL",
+    "latitude": 54.35,
+    "longitude": 18.65,
+    "nearestAirportIata": "GDN"
+  },
+  {
+    "id": "ghent",
+    "name": "Ghent",
+    "nameTr": "Gent",
+    "countryCode": "BE",
+    "latitude": 51.05,
+    "longitude": 3.73
+  },
+  {
+    "id": "giethoorn",
+    "name": "Giethoorn",
+    "nameTr": "Giethoorn",
+    "countryCode": "NL",
+    "latitude": 52.74,
+    "longitude": 6.08
+  },
+  {
+    "id": "crete",
+    "name": "Heraklion",
+    "nameTr": "Girit (Heraklion)",
+    "countryCode": "GR",
+    "latitude": 35.34,
+    "longitude": 25.14,
+    "nearestAirportIata": "HER"
+  },
+  {
+    "id": "girne",
+    "name": "Kyrenia",
+    "nameTr": "Girne",
+    "countryCode": "CY",
+    "latitude": 35.34,
+    "longitude": 33.32
+  },
+  {
+    "id": "glasgow",
+    "name": "Glasgow",
+    "nameTr": "Glasgow",
+    "countryCode": "GB",
+    "latitude": 55.86,
+    "longitude": -4.25,
+    "nearestAirportIata": "GLA"
+  },
+  {
+    "id": "goa",
+    "name": "Goa",
+    "nameTr": "Goa",
+    "countryCode": "IN",
+    "latitude": 15.3,
+    "longitude": 74.12,
+    "nearestAirportIata": "GOI"
+  },
+  {
+    "id": "gothenburg",
+    "name": "Gothenburg",
+    "nameTr": "Göteborg",
+    "countryCode": "SE",
+    "latitude": 57.71,
+    "longitude": 11.97,
+    "nearestAirportIata": "GOT"
+  },
+  {
+    "id": "granada",
+    "name": "Granada",
+    "nameTr": "Granada",
+    "countryCode": "ES",
+    "latitude": 37.18,
+    "longitude": -3.6,
+    "nearestAirportIata": "GRX"
+  },
+  {
+    "id": "graz",
+    "name": "Graz",
+    "nameTr": "Graz",
+    "countryCode": "AT",
+    "latitude": 47.07,
+    "longitude": 15.44,
+    "nearestAirportIata": "GRZ"
+  },
+  {
+    "id": "cdmx-guadalajara",
+    "name": "Guadalajara",
+    "nameTr": "Guadalajara",
+    "countryCode": "MX",
+    "latitude": 20.67,
+    "longitude": -103.35,
+    "nearestAirportIata": "GDL"
+  },
+  {
+    "id": "haarlem",
+    "name": "Haarlem",
+    "nameTr": "Haarlem",
+    "countryCode": "NL",
+    "latitude": 52.39,
+    "longitude": 4.64
+  },
+  {
+    "id": "hallstatt",
+    "name": "Hallstatt",
+    "nameTr": "Hallstatt",
+    "countryCode": "AT",
+    "latitude": 47.56,
+    "longitude": 13.65
+  },
+  {
+    "id": "hamburg",
+    "name": "Hamburg",
+    "nameTr": "Hamburg",
+    "countryCode": "DE",
+    "latitude": 53.55,
+    "longitude": 9.99,
+    "nearestAirportIata": "HAM"
+  },
+  {
+    "id": "hanoi",
+    "name": "Hanoi",
+    "nameTr": "Hanoi",
+    "countryCode": "VN",
+    "latitude": 21.03,
+    "longitude": 105.85,
+    "nearestAirportIata": "HAN"
+  },
+  {
+    "id": "crete-chania",
+    "name": "Chania",
+    "nameTr": "Hanya",
+    "countryCode": "GR",
+    "latitude": 35.51,
+    "longitude": 24.02,
+    "nearestAirportIata": "CHQ"
+  },
+  {
+    "id": "heidelberg",
+    "name": "Heidelberg",
+    "nameTr": "Heidelberg",
+    "countryCode": "DE",
+    "latitude": 49.4,
+    "longitude": 8.67
+  },
+  {
+    "id": "helsinki",
+    "name": "Helsinki",
+    "nameTr": "Helsinki",
+    "countryCode": "FI",
+    "latitude": 60.17,
+    "longitude": 24.94,
+    "nearestAirportIata": "HEL"
+  },
+  {
+    "id": "hiroshima",
+    "name": "Hiroshima",
+    "nameTr": "Hiroshima",
+    "countryCode": "JP",
+    "latitude": 34.39,
+    "longitude": 132.46,
+    "nearestAirportIata": "HIJ"
+  },
+  {
+    "id": "ho-chi-minh",
+    "name": "Ho Chi Minh City",
+    "nameTr": "Ho Chi Minh",
+    "countryCode": "VN",
+    "latitude": 10.82,
+    "longitude": 106.63,
+    "nearestAirportIata": "SGN"
+  },
+  {
+    "id": "hoi-an",
+    "name": "Hoi An",
+    "nameTr": "Hoi An",
+    "countryCode": "VN",
+    "latitude": 15.88,
+    "longitude": 108.34
+  },
+  {
+    "id": "hong-kong",
+    "name": "Hong Kong",
+    "nameTr": "Hong Kong",
+    "countryCode": "CN",
+    "latitude": 22.32,
+    "longitude": 114.17,
+    "nearestAirportIata": "HKG"
+  },
+  {
+    "id": "honolulu",
+    "name": "Honolulu",
+    "nameTr": "Honolulu",
+    "countryCode": "US",
+    "latitude": 21.31,
+    "longitude": -157.86,
+    "nearestAirportIata": "HNL"
+  },
+  {
+    "id": "hvar",
+    "name": "Hvar",
+    "nameTr": "Hvar",
+    "countryCode": "HR",
+    "latitude": 43.17,
+    "longitude": 16.44
+  },
+  {
+    "id": "ibiza",
+    "name": "Ibiza",
+    "nameTr": "Ibiza",
+    "countryCode": "ES",
+    "latitude": 38.91,
+    "longitude": 1.44,
+    "nearestAirportIata": "IBZ"
+  },
+  {
+    "id": "innsbruck",
+    "name": "Innsbruck",
+    "nameTr": "Innsbruck",
+    "countryCode": "AT",
+    "latitude": 47.27,
+    "longitude": 11.39,
+    "nearestAirportIata": "INN"
+  },
+  {
+    "id": "interlaken",
+    "name": "Interlaken",
+    "nameTr": "Interlaken",
+    "countryCode": "CH",
+    "latitude": 46.69,
+    "longitude": 7.86
+  },
+  {
+    "id": "inverness",
+    "name": "Inverness",
+    "nameTr": "Inverness",
+    "countryCode": "GB",
+    "latitude": 57.48,
+    "longitude": -4.23,
+    "nearestAirportIata": "INV"
+  },
+  {
+    "id": "istanbul",
+    "name": "Istanbul",
+    "nameTr": "İstanbul",
+    "countryCode": "TR",
+    "latitude": 41.01,
+    "longitude": 28.98,
+    "nearestAirportIata": "IST"
+  },
+  {
+    "id": "izmir",
+    "name": "Izmir",
+    "nameTr": "İzmir",
+    "countryCode": "TR",
+    "latitude": 38.42,
+    "longitude": 27.14,
+    "nearestAirportIata": "ADB"
+  },
+  {
+    "id": "jaipur",
+    "name": "Jaipur",
+    "nameTr": "Jaipur",
+    "countryCode": "IN",
+    "latitude": 26.91,
+    "longitude": 75.79,
+    "nearestAirportIata": "JAI"
+  },
+  {
+    "id": "johannesburg",
+    "name": "Johannesburg",
+    "nameTr": "Johannesburg",
+    "countryCode": "ZA",
+    "latitude": -26.2,
+    "longitude": 28.05,
+    "nearestAirportIata": "JNB"
+  },
+  {
+    "id": "cairo",
+    "name": "Cairo",
+    "nameTr": "Kahire",
+    "countryCode": "EG",
+    "latitude": 30.04,
+    "longitude": 31.24,
+    "nearestAirportIata": "CAI"
+  },
+  {
+    "id": "cappadocia",
+    "name": "Goreme",
+    "nameTr": "Kapadokya",
+    "countryCode": "TR",
+    "latitude": 38.64,
+    "longitude": 34.83,
+    "nearestAirportIata": "NAV"
+  },
+  {
+    "id": "karlovy-vary",
+    "name": "Karlovy Vary",
+    "nameTr": "Karlovy Vary",
+    "countryCode": "CZ",
+    "latitude": 50.23,
+    "longitude": 12.87
+  },
+  {
+    "id": "casablanca",
+    "name": "Casablanca",
+    "nameTr": "Kazablanka",
+    "countryCode": "MA",
+    "latitude": 33.57,
+    "longitude": -7.59,
+    "nearestAirportIata": "CMN"
+  },
+  {
+    "id": "kyiv",
+    "name": "Kyiv",
+    "nameTr": "Kiev",
+    "countryCode": "UA",
+    "latitude": 50.45,
+    "longitude": 30.52,
+    "nearestAirportIata": "KBP"
+  },
+  {
+    "id": "copenhagen",
+    "name": "Copenhagen",
+    "nameTr": "Kopenhag",
+    "countryCode": "DK",
+    "latitude": 55.68,
+    "longitude": 12.57,
+    "nearestAirportIata": "CPH"
+  },
+  {
+    "id": "corfu",
+    "name": "Corfu",
+    "nameTr": "Korfu",
+    "countryCode": "GR",
+    "latitude": 39.62,
+    "longitude": 19.92,
+    "nearestAirportIata": "CFU"
+  },
+  {
+    "id": "kotor",
+    "name": "Kotor",
+    "nameTr": "Kotor",
+    "countryCode": "ME",
+    "latitude": 42.42,
+    "longitude": 18.77
+  },
+  {
+    "id": "cologne",
+    "name": "Cologne",
+    "nameTr": "Köln",
+    "countryCode": "DE",
+    "latitude": 50.94,
+    "longitude": 6.96,
+    "nearestAirportIata": "CGN"
+  },
+  {
+    "id": "krakow",
+    "name": "Krakow",
+    "nameTr": "Krakow",
+    "countryCode": "PL",
+    "latitude": 50.06,
+    "longitude": 19.94,
+    "nearestAirportIata": "KRK"
+  },
+  {
+    "id": "kuala-lumpur",
+    "name": "Kuala Lumpur",
+    "nameTr": "Kuala Lumpur",
+    "countryCode": "MY",
+    "latitude": 3.14,
+    "longitude": 101.69,
+    "nearestAirportIata": "KUL"
+  },
+  {
+    "id": "jerusalem",
+    "name": "Jerusalem",
+    "nameTr": "Kudüs",
+    "countryCode": "IL",
+    "latitude": 31.77,
+    "longitude": 35.21
+  },
+  {
+    "id": "kyoto",
+    "name": "Kyoto",
+    "nameTr": "Kyoto",
+    "countryCode": "JP",
+    "latitude": 35.01,
+    "longitude": 135.77
+  },
+  {
+    "id": "lagos-pt",
+    "name": "Lagos",
+    "nameTr": "Lagos (Portekiz)",
+    "countryCode": "PT",
+    "latitude": 37.1,
+    "longitude": -8.67
+  },
+  {
+    "id": "the-hague",
+    "name": "The Hague",
+    "nameTr": "Lahey",
+    "countryCode": "NL",
+    "latitude": 52.07,
+    "longitude": 4.3
+  },
+  {
+    "id": "larnaca",
+    "name": "Larnaca",
+    "nameTr": "Larnaka",
+    "countryCode": "CY",
+    "latitude": 34.92,
+    "longitude": 33.62,
+    "nearestAirportIata": "LCA"
+  },
+  {
+    "id": "las-vegas",
+    "name": "Las Vegas",
+    "nameTr": "Las Vegas",
+    "countryCode": "US",
+    "latitude": 36.17,
+    "longitude": -115.14,
+    "nearestAirportIata": "LAS"
+  },
+  {
+    "id": "lecce",
+    "name": "Lecce",
+    "nameTr": "Lecce",
+    "countryCode": "IT",
+    "latitude": 40.35,
+    "longitude": 18.17
+  },
+  {
+    "id": "nicosia",
+    "name": "Nicosia",
+    "nameTr": "Lefkoşa",
+    "countryCode": "CY",
+    "latitude": 35.19,
+    "longitude": 33.38
+  },
+  {
+    "id": "lille",
+    "name": "Lille",
+    "nameTr": "Lille",
+    "countryCode": "FR",
+    "latitude": 50.63,
+    "longitude": 3.06,
+    "nearestAirportIata": "LIL"
+  },
+  {
+    "id": "lima",
+    "name": "Lima",
+    "nameTr": "Lima",
+    "countryCode": "PE",
+    "latitude": -12.05,
+    "longitude": -77.04,
+    "nearestAirportIata": "LIM"
+  },
+  {
+    "id": "liverpool",
+    "name": "Liverpool",
+    "nameTr": "Liverpool",
+    "countryCode": "GB",
+    "latitude": 53.41,
+    "longitude": -2.99,
+    "nearestAirportIata": "LPL"
+  },
+  {
+    "id": "lisbon",
+    "name": "Lisbon",
+    "nameTr": "Lizbon",
+    "countryCode": "PT",
+    "latitude": 38.72,
+    "longitude": -9.14,
+    "nearestAirportIata": "LIS"
+  },
+  {
+    "id": "ljubljana",
+    "name": "Ljubljana",
+    "nameTr": "Ljubljana",
+    "countryCode": "SI",
+    "latitude": 46.06,
+    "longitude": 14.51,
+    "nearestAirportIata": "LJU"
+  },
+  {
+    "id": "london",
+    "name": "London",
+    "nameTr": "Londra",
+    "countryCode": "GB",
+    "latitude": 51.51,
+    "longitude": -0.13,
+    "nearestAirportIata": "LHR"
+  },
+  {
+    "id": "los-angeles",
+    "name": "Los Angeles",
+    "nameTr": "Los Angeles",
+    "countryCode": "US",
+    "latitude": 34.05,
+    "longitude": -118.24,
+    "nearestAirportIata": "LAX"
+  },
+  {
+    "id": "lausanne",
+    "name": "Lausanne",
+    "nameTr": "Lozan",
+    "countryCode": "CH",
+    "latitude": 46.52,
+    "longitude": 6.63
+  },
+  {
+    "id": "luxor",
+    "name": "Luxor",
+    "nameTr": "Luksor",
+    "countryCode": "EG",
+    "latitude": 25.69,
+    "longitude": 32.64,
+    "nearestAirportIata": "LXR"
+  },
+  {
+    "id": "lucerne",
+    "name": "Lucerne",
+    "nameTr": "Luzern",
+    "countryCode": "CH",
+    "latitude": 47.05,
+    "longitude": 8.31
+  },
+  {
+    "id": "luxembourg",
+    "name": "Luxembourg",
+    "nameTr": "Lüksemburg",
+    "countryCode": "LU",
+    "latitude": 49.61,
+    "longitude": 6.13,
+    "nearestAirportIata": "LUX"
+  },
+  {
+    "id": "lviv",
+    "name": "Lviv",
+    "nameTr": "Lviv",
+    "countryCode": "UA",
+    "latitude": 49.84,
+    "longitude": 24.03,
+    "nearestAirportIata": "LWO"
+  },
+  {
+    "id": "lyon",
+    "name": "Lyon",
+    "nameTr": "Lyon",
+    "countryCode": "FR",
+    "latitude": 45.76,
+    "longitude": 4.84,
+    "nearestAirportIata": "LYS"
+  },
+  {
+    "id": "maastricht",
+    "name": "Maastricht",
+    "nameTr": "Maastricht",
+    "countryCode": "NL",
+    "latitude": 50.85,
+    "longitude": 5.69,
+    "nearestAirportIata": "MST"
+  },
+  {
+    "id": "machu-picchu",
+    "name": "Machu Picchu",
+    "nameTr": "Machu Picchu",
+    "countryCode": "PE",
+    "latitude": -13.16,
+    "longitude": -72.55
+  },
+  {
+    "id": "madeira",
+    "name": "Funchal",
+    "nameTr": "Madeira",
+    "countryCode": "PT",
+    "latitude": 32.67,
+    "longitude": -16.92,
+    "nearestAirportIata": "FNC"
+  },
+  {
+    "id": "madrid",
+    "name": "Madrid",
+    "nameTr": "Madrid",
+    "countryCode": "ES",
+    "latitude": 40.42,
+    "longitude": -3.7,
+    "nearestAirportIata": "MAD"
+  },
+  {
+    "id": "malaga",
+    "name": "Malaga",
+    "nameTr": "Malaga",
+    "countryCode": "ES",
+    "latitude": 36.72,
+    "longitude": -4.42,
+    "nearestAirportIata": "AGP"
+  },
+  {
+    "id": "malmo",
+    "name": "Malmo",
+    "nameTr": "Malmö",
+    "countryCode": "SE",
+    "latitude": 55.61,
+    "longitude": 13,
+    "nearestAirportIata": "MMX"
+  },
+  {
+    "id": "manchester",
+    "name": "Manchester",
+    "nameTr": "Manchester",
+    "countryCode": "GB",
+    "latitude": 53.48,
+    "longitude": -2.24,
+    "nearestAirportIata": "MAN"
+  },
+  {
+    "id": "mardin",
+    "name": "Mardin",
+    "nameTr": "Mardin",
+    "countryCode": "TR",
+    "latitude": 37.31,
+    "longitude": 40.74
+  },
+  {
+    "id": "marrakech",
+    "name": "Marrakech",
+    "nameTr": "Marrakeş",
+    "countryCode": "MA",
+    "latitude": 31.63,
+    "longitude": -8.01,
+    "nearestAirportIata": "RAK"
+  },
+  {
+    "id": "marseille",
+    "name": "Marseille",
+    "nameTr": "Marsilya",
+    "countryCode": "FR",
+    "latitude": 43.3,
+    "longitude": 5.37,
+    "nearestAirportIata": "MRS"
+  },
+  {
+    "id": "mater",
+    "name": "Matera",
+    "nameTr": "Matera",
+    "countryCode": "IT",
+    "latitude": 40.67,
+    "longitude": 16.6
+  },
+  {
+    "id": "mdina",
+    "name": "Mdina",
+    "nameTr": "Mdina",
+    "countryCode": "MT",
+    "latitude": 35.89,
+    "longitude": 14.4
+  },
+  {
+    "id": "melbourne",
+    "name": "Melbourne",
+    "nameTr": "Melbourne",
+    "countryCode": "AU",
+    "latitude": -37.81,
+    "longitude": 144.96,
+    "nearestAirportIata": "MEL"
+  },
+  {
+    "id": "meteora",
+    "name": "Meteora",
+    "nameTr": "Meteora",
+    "countryCode": "GR",
+    "latitude": 39.71,
+    "longitude": 21.63
+  },
+  {
+    "id": "mexico-city",
+    "name": "Mexico City",
+    "nameTr": "Mexico City",
+    "countryCode": "MX",
+    "latitude": 19.43,
+    "longitude": -99.13,
+    "nearestAirportIata": "MEX"
+  },
+  {
+    "id": "miami",
+    "name": "Miami",
+    "nameTr": "Miami",
+    "countryCode": "US",
+    "latitude": 25.76,
+    "longitude": -80.19,
+    "nearestAirportIata": "MIA"
+  },
+  {
+    "id": "milan",
+    "name": "Milan",
+    "nameTr": "Milano",
+    "countryCode": "IT",
+    "latitude": 45.46,
+    "longitude": 9.19,
+    "nearestAirportIata": "MXP"
+  },
+  {
+    "id": "monaco",
+    "name": "Monaco",
+    "nameTr": "Monako",
+    "countryCode": "MC",
+    "latitude": 43.74,
+    "longitude": 7.42
+  },
+  {
+    "id": "montpellier",
+    "name": "Montpellier",
+    "nameTr": "Montpellier",
+    "countryCode": "FR",
+    "latitude": 43.61,
+    "longitude": 3.88,
+    "nearestAirportIata": "MPL"
+  },
+  {
+    "id": "montreal",
+    "name": "Montreal",
+    "nameTr": "Montreal",
+    "countryCode": "CA",
+    "latitude": 45.5,
+    "longitude": -73.57,
+    "nearestAirportIata": "YUL"
+  },
+  {
+    "id": "moscow",
+    "name": "Moscow",
+    "nameTr": "Moskova",
+    "countryCode": "RU",
+    "latitude": 55.76,
+    "longitude": 37.62,
+    "nearestAirportIata": "SVO"
+  },
+  {
+    "id": "mostar",
+    "name": "Mostar",
+    "nameTr": "Mostar",
+    "countryCode": "BA",
+    "latitude": 43.34,
+    "longitude": 17.81
+  },
+  {
+    "id": "mumbai",
+    "name": "Mumbai",
+    "nameTr": "Mumbai",
+    "countryCode": "IN",
+    "latitude": 19.08,
+    "longitude": 72.88,
+    "nearestAirportIata": "BOM"
+  },
+  {
+    "id": "munich",
+    "name": "Munich",
+    "nameTr": "Münih",
+    "countryCode": "DE",
+    "latitude": 48.14,
+    "longitude": 11.58,
+    "nearestAirportIata": "MUC"
+  },
+  {
+    "id": "mykonos",
+    "name": "Mykonos",
+    "nameTr": "Mykonos",
+    "countryCode": "GR",
+    "latitude": 37.45,
+    "longitude": 25.33,
+    "nearestAirportIata": "JMK"
+  },
+  {
+    "id": "nafplio",
+    "name": "Nafplio",
+    "nameTr": "Nafplio",
+    "countryCode": "GR",
+    "latitude": 37.57,
+    "longitude": 22.8
+  },
+  {
+    "id": "nantes",
+    "name": "Nantes",
+    "nameTr": "Nantes",
+    "countryCode": "FR",
+    "latitude": 47.22,
+    "longitude": -1.55,
+    "nearestAirportIata": "NTE"
+  },
+  {
+    "id": "naples",
+    "name": "Naples",
+    "nameTr": "Napoli",
+    "countryCode": "IT",
+    "latitude": 40.85,
+    "longitude": 14.27,
+    "nearestAirportIata": "NAP"
+  },
+  {
+    "id": "naxos",
+    "name": "Naxos",
+    "nameTr": "Naxos",
+    "countryCode": "GR",
+    "latitude": 37.1,
+    "longitude": 25.38
+  },
+  {
+    "id": "new-orleans",
+    "name": "New Orleans",
+    "nameTr": "New Orleans",
+    "countryCode": "US",
+    "latitude": 29.95,
+    "longitude": -90.07,
+    "nearestAirportIata": "MSY"
+  },
+  {
+    "id": "new-york",
+    "name": "New York",
+    "nameTr": "New York",
+    "countryCode": "US",
+    "latitude": 40.71,
+    "longitude": -74.01,
+    "nearestAirportIata": "JFK"
+  },
+  {
+    "id": "nice",
+    "name": "Nice",
+    "nameTr": "Nice",
+    "countryCode": "FR",
+    "latitude": 43.71,
+    "longitude": 7.26,
+    "nearestAirportIata": "NCE"
+  },
+  {
+    "id": "novi-sad",
+    "name": "Novi Sad",
+    "nameTr": "Novi Sad",
+    "countryCode": "RS",
+    "latitude": 45.27,
+    "longitude": 19.83
+  },
+  {
+    "id": "nuremberg",
+    "name": "Nuremberg",
+    "nameTr": "Nürnberg",
+    "countryCode": "DE",
+    "latitude": 49.45,
+    "longitude": 11.08,
+    "nearestAirportIata": "NUE"
+  },
+  {
+    "id": "oaxaca",
+    "name": "Oaxaca",
+    "nameTr": "Oaxaca",
+    "countryCode": "MX",
+    "latitude": 17.07,
+    "longitude": -96.72
+  },
+  {
+    "id": "okinawa",
+    "name": "Naha",
+    "nameTr": "Okinawa",
+    "countryCode": "JP",
+    "latitude": 26.21,
+    "longitude": 127.68,
+    "nearestAirportIata": "OKA"
+  },
+  {
+    "id": "osaka",
+    "name": "Osaka",
+    "nameTr": "Osaka",
+    "countryCode": "JP",
+    "latitude": 34.69,
+    "longitude": 135.5,
+    "nearestAirportIata": "KIX"
+  },
+  {
+    "id": "oslo",
+    "name": "Oslo",
+    "nameTr": "Oslo",
+    "countryCode": "NO",
+    "latitude": 59.91,
+    "longitude": 10.75,
+    "nearestAirportIata": "OSL"
+  },
+  {
+    "id": "oxford",
+    "name": "Oxford",
+    "nameTr": "Oxford",
+    "countryCode": "GB",
+    "latitude": 51.75,
+    "longitude": -1.26
+  },
+  {
+    "id": "padua",
+    "name": "Padua",
+    "nameTr": "Padova",
+    "countryCode": "IT",
+    "latitude": 45.41,
+    "longitude": 11.88
+  },
+  {
+    "id": "palermo",
+    "name": "Palermo",
+    "nameTr": "Palermo",
+    "countryCode": "IT",
+    "latitude": 38.12,
+    "longitude": 13.36,
+    "nearestAirportIata": "PMO"
+  },
+  {
+    "id": "palma",
+    "name": "Palma",
+    "nameTr": "Palma de Mallorca",
+    "countryCode": "ES",
+    "latitude": 39.57,
+    "longitude": 2.65,
+    "nearestAirportIata": "PMI"
+  },
+  {
+    "id": "pamukkale",
+    "name": "Pamukkale",
+    "nameTr": "Pamukkale",
+    "countryCode": "TR",
+    "latitude": 37.92,
+    "longitude": 29.12
+  },
+  {
+    "id": "paris",
+    "name": "Paris",
+    "nameTr": "Paris",
+    "countryCode": "FR",
+    "latitude": 48.86,
+    "longitude": 2.35,
+    "nearestAirportIata": "CDG"
+  },
+  {
+    "id": "paros",
+    "name": "Paros",
+    "nameTr": "Paros",
+    "countryCode": "GR",
+    "latitude": 37.09,
+    "longitude": 25.15,
+    "nearestAirportIata": "PAS"
+  },
+  {
+    "id": "pecs",
+    "name": "Pecs",
+    "nameTr": "Pécs",
+    "countryCode": "HU",
+    "latitude": 46.07,
+    "longitude": 18.23
+  },
+  {
+    "id": "beijing",
+    "name": "Beijing",
+    "nameTr": "Pekin",
+    "countryCode": "CN",
+    "latitude": 39.9,
+    "longitude": 116.41,
+    "nearestAirportIata": "PEK"
+  },
+  {
+    "id": "penang",
+    "name": "George Town",
+    "nameTr": "Penang",
+    "countryCode": "MY",
+    "latitude": 5.41,
+    "longitude": 100.33,
+    "nearestAirportIata": "PEN"
+  },
+  {
+    "id": "perugia",
+    "name": "Perugia",
+    "nameTr": "Perugia",
+    "countryCode": "IT",
+    "latitude": 43.11,
+    "longitude": 12.39,
+    "nearestAirportIata": "PEG"
+  },
+  {
+    "id": "petra",
+    "name": "Petra",
+    "nameTr": "Petra",
+    "countryCode": "JO",
+    "latitude": 30.33,
+    "longitude": 35.44
+  },
+  {
+    "id": "phuket",
+    "name": "Phuket",
+    "nameTr": "Phuket",
+    "countryCode": "TH",
+    "latitude": 7.88,
+    "longitude": 98.39,
+    "nearestAirportIata": "HKT"
+  },
+  {
+    "id": "piran",
+    "name": "Piran",
+    "nameTr": "Piran",
+    "countryCode": "SI",
+    "latitude": 45.53,
+    "longitude": 13.57
+  },
+  {
+    "id": "pisa",
+    "name": "Pisa",
+    "nameTr": "Pisa",
+    "countryCode": "IT",
+    "latitude": 43.72,
+    "longitude": 10.4,
+    "nearestAirportIata": "PSA"
+  },
+  {
+    "id": "podgorica",
+    "name": "Podgorica",
+    "nameTr": "Podgorica",
+    "countryCode": "ME",
+    "latitude": 42.43,
+    "longitude": 19.26,
+    "nearestAirportIata": "TGD"
+  },
+  {
+    "id": "porto",
+    "name": "Porto",
+    "nameTr": "Porto",
+    "countryCode": "PT",
+    "latitude": 41.15,
+    "longitude": -8.61,
+    "nearestAirportIata": "OPO"
+  },
+  {
+    "id": "prague",
+    "name": "Prague",
+    "nameTr": "Prag",
+    "countryCode": "CZ",
+    "latitude": 50.08,
+    "longitude": 14.44,
+    "nearestAirportIata": "PRG"
+  },
+  {
+    "id": "quebec-city",
+    "name": "Quebec City",
+    "nameTr": "Quebec",
+    "countryCode": "CA",
+    "latitude": 46.81,
+    "longitude": -71.21,
+    "nearestAirportIata": "YQB"
+  },
+  {
+    "id": "queenstown",
+    "name": "Queenstown",
+    "nameTr": "Queenstown",
+    "countryCode": "NZ",
+    "latitude": -45.03,
+    "longitude": 168.66,
+    "nearestAirportIata": "ZQN"
+  },
+  {
+    "id": "reykjavik",
+    "name": "Reykjavik",
+    "nameTr": "Reykjavik",
+    "countryCode": "IS",
+    "latitude": 64.15,
+    "longitude": -21.94,
+    "nearestAirportIata": "KEF"
+  },
+  {
+    "id": "riga",
+    "name": "Riga",
+    "nameTr": "Riga",
+    "countryCode": "LV",
+    "latitude": 56.95,
+    "longitude": 24.11,
+    "nearestAirportIata": "RIX"
+  },
+  {
+    "id": "rio",
+    "name": "Rio de Janeiro",
+    "nameTr": "Rio de Janeiro",
+    "countryCode": "BR",
+    "latitude": -22.91,
+    "longitude": -43.17,
+    "nearestAirportIata": "GIG"
+  },
+  {
+    "id": "riyadh",
+    "name": "Riyadh",
+    "nameTr": "Riyad",
+    "countryCode": "SA",
+    "latitude": 24.71,
+    "longitude": 46.68,
+    "nearestAirportIata": "RUH"
+  },
+  {
+    "id": "rhodes",
+    "name": "Rhodes",
+    "nameTr": "Rodos",
+    "countryCode": "GR",
+    "latitude": 36.43,
+    "longitude": 28.22,
+    "nearestAirportIata": "RHO"
+  },
+  {
+    "id": "rome",
+    "name": "Rome",
+    "nameTr": "Roma",
+    "countryCode": "IT",
+    "latitude": 41.9,
+    "longitude": 12.5,
+    "nearestAirportIata": "FCO"
+  },
+  {
+    "id": "ronda",
+    "name": "Ronda",
+    "nameTr": "Ronda",
+    "countryCode": "ES",
+    "latitude": 36.74,
+    "longitude": -5.16
+  },
+  {
+    "id": "rothburg",
+    "name": "Rothenburg ob der Tauber",
+    "nameTr": "Rothenburg",
+    "countryCode": "DE",
+    "latitude": 49.38,
+    "longitude": 10.18
+  },
+  {
+    "id": "rotterdam",
+    "name": "Rotterdam",
+    "nameTr": "Rotterdam",
+    "countryCode": "NL",
+    "latitude": 51.92,
+    "longitude": 4.48,
+    "nearestAirportIata": "RTM"
+  },
+  {
+    "id": "rouen",
+    "name": "Rouen",
+    "nameTr": "Rouen",
+    "countryCode": "FR",
+    "latitude": 49.44,
+    "longitude": 1.1
+  },
+  {
+    "id": "rovaniemi",
+    "name": "Rovaniemi",
+    "nameTr": "Rovaniemi",
+    "countryCode": "FI",
+    "latitude": 66.5,
+    "longitude": 25.73,
+    "nearestAirportIata": "RVN"
+  },
+  {
+    "id": "rovinj",
+    "name": "Rovinj",
+    "nameTr": "Rovinj",
+    "countryCode": "HR",
+    "latitude": 45.08,
+    "longitude": 13.64
+  },
+  {
+    "id": "safranbolu",
+    "name": "Safranbolu",
+    "nameTr": "Safranbolu",
+    "countryCode": "TR",
+    "latitude": 41.25,
+    "longitude": 32.69
+  },
+  {
+    "id": "salamanca",
+    "name": "Salamanca",
+    "nameTr": "Salamanca",
+    "countryCode": "ES",
+    "latitude": 40.97,
+    "longitude": -5.66
+  },
+  {
+    "id": "salvador",
+    "name": "Salvador",
+    "nameTr": "Salvador",
+    "countryCode": "BR",
+    "latitude": -12.97,
+    "longitude": -38.5,
+    "nearestAirportIata": "SSA"
+  },
+  {
+    "id": "salzburg",
+    "name": "Salzburg",
+    "nameTr": "Salzburg",
+    "countryCode": "AT",
+    "latitude": 47.81,
+    "longitude": 13.06,
+    "nearestAirportIata": "SZG"
+  },
+  {
+    "id": "san-diego",
+    "name": "San Diego",
+    "nameTr": "San Diego",
+    "countryCode": "US",
+    "latitude": 32.72,
+    "longitude": -117.16,
+    "nearestAirportIata": "SAN"
+  },
+  {
+    "id": "san-francisco",
+    "name": "San Francisco",
+    "nameTr": "San Francisco",
+    "countryCode": "US",
+    "latitude": 37.77,
+    "longitude": -122.42,
+    "nearestAirportIata": "SFO"
+  },
+  {
+    "id": "san-sebastian",
+    "name": "San Sebastian",
+    "nameTr": "San Sebastian",
+    "countryCode": "ES",
+    "latitude": 43.32,
+    "longitude": -1.98
+  },
+  {
+    "id": "saint-petersburg",
+    "name": "Saint Petersburg",
+    "nameTr": "Sankt Petersburg",
+    "countryCode": "RU",
+    "latitude": 59.93,
+    "longitude": 30.34,
+    "nearestAirportIata": "LED"
+  },
+  {
+    "id": "santiago-compostela",
+    "name": "Santiago de Compostela",
+    "nameTr": "Santiago de Compostela",
+    "countryCode": "ES",
+    "latitude": 42.88,
+    "longitude": -8.54,
+    "nearestAirportIata": "SCQ"
+  },
+  {
+    "id": "santorini",
+    "name": "Santorini",
+    "nameTr": "Santorini",
+    "countryCode": "GR",
+    "latitude": 36.39,
+    "longitude": 25.46,
+    "nearestAirportIata": "JTR"
+  },
+  {
+    "id": "sao-paulo",
+    "name": "Sao Paulo",
+    "nameTr": "Sao Paulo",
+    "countryCode": "BR",
+    "latitude": -23.55,
+    "longitude": -46.63,
+    "nearestAirportIata": "GRU"
+  },
+  {
+    "id": "sapporo",
+    "name": "Sapporo",
+    "nameTr": "Sapporo",
+    "countryCode": "JP",
+    "latitude": 43.06,
+    "longitude": 141.35,
+    "nearestAirportIata": "CTS"
+  },
+  {
+    "id": "sarajevo",
+    "name": "Sarajevo",
+    "nameTr": "Saraybosna",
+    "countryCode": "BA",
+    "latitude": 43.86,
+    "longitude": 18.41,
+    "nearestAirportIata": "SJJ"
+  },
+  {
+    "id": "seattle",
+    "name": "Seattle",
+    "nameTr": "Seattle",
+    "countryCode": "US",
+    "latitude": 47.61,
+    "longitude": -122.33,
+    "nearestAirportIata": "SEA"
+  },
+  {
+    "id": "segovia",
+    "name": "Segovia",
+    "nameTr": "Segovia",
+    "countryCode": "ES",
+    "latitude": 40.95,
+    "longitude": -4.12
+  },
+  {
+    "id": "thessaloniki",
+    "name": "Thessaloniki",
+    "nameTr": "Selanik",
+    "countryCode": "GR",
+    "latitude": 40.64,
+    "longitude": 22.94,
+    "nearestAirportIata": "SKG"
+  },
+  {
+    "id": "seoul",
+    "name": "Seoul",
+    "nameTr": "Seul",
+    "countryCode": "KR",
+    "latitude": 37.57,
+    "longitude": 126.98,
+    "nearestAirportIata": "ICN"
+  },
+  {
+    "id": "seville",
+    "name": "Seville",
+    "nameTr": "Sevilla",
+    "countryCode": "ES",
+    "latitude": 37.39,
+    "longitude": -5.99,
+    "nearestAirportIata": "SVQ"
+  },
+  {
+    "id": "sibiu",
+    "name": "Sibiu",
+    "nameTr": "Sibiu",
+    "countryCode": "RO",
+    "latitude": 45.8,
+    "longitude": 24.15
+  },
+  {
+    "id": "sydney",
+    "name": "Sydney",
+    "nameTr": "Sidney",
+    "countryCode": "AU",
+    "latitude": -33.87,
+    "longitude": 151.21,
+    "nearestAirportIata": "SYD"
+  },
+  {
+    "id": "siena",
+    "name": "Siena",
+    "nameTr": "Siena",
+    "countryCode": "IT",
+    "latitude": 43.32,
+    "longitude": 11.33
+  },
+  {
+    "id": "singapore",
+    "name": "Singapore",
+    "nameTr": "Singapur",
+    "countryCode": "SG",
+    "latitude": 1.35,
+    "longitude": 103.82,
+    "nearestAirportIata": "SIN"
+  },
+  {
+    "id": "sintra",
+    "name": "Sintra",
+    "nameTr": "Sintra",
+    "countryCode": "PT",
+    "latitude": 38.8,
+    "longitude": -9.39
+  },
+  {
+    "id": "sirmione",
+    "name": "Sirmione",
+    "nameTr": "Sirmione",
+    "countryCode": "IT",
+    "latitude": 45.49,
+    "longitude": 10.61
+  },
+  {
+    "id": "sofia",
+    "name": "Sofia",
+    "nameTr": "Sofya",
+    "countryCode": "BG",
+    "latitude": 42.7,
+    "longitude": 23.32,
+    "nearestAirportIata": "SOF"
+  },
+  {
+    "id": "split",
+    "name": "Split",
+    "nameTr": "Split",
+    "countryCode": "HR",
+    "latitude": 43.51,
+    "longitude": 16.44,
+    "nearestAirportIata": "SPU"
+  },
+  {
+    "id": "stavanger",
+    "name": "Stavanger",
+    "nameTr": "Stavanger",
+    "countryCode": "NO",
+    "latitude": 58.97,
+    "longitude": 5.73,
+    "nearestAirportIata": "SVG"
+  },
+  {
+    "id": "stockholm",
+    "name": "Stockholm",
+    "nameTr": "Stockholm",
+    "countryCode": "SE",
+    "latitude": 59.33,
+    "longitude": 18.07,
+    "nearestAirportIata": "ARN"
+  },
+  {
+    "id": "strasbourg",
+    "name": "Strasbourg",
+    "nameTr": "Strasbourg",
+    "countryCode": "FR",
+    "latitude": 48.57,
+    "longitude": 7.75,
+    "nearestAirportIata": "SXB"
+  },
+  {
+    "id": "stuttgart",
+    "name": "Stuttgart",
+    "nameTr": "Stuttgart",
+    "countryCode": "DE",
+    "latitude": 48.78,
+    "longitude": 9.18,
+    "nearestAirportIata": "STR"
+  },
+  {
+    "id": "shanghai",
+    "name": "Shanghai",
+    "nameTr": "Şanghay",
+    "countryCode": "CN",
+    "latitude": 31.23,
+    "longitude": 121.47,
+    "nearestAirportIata": "PVG"
+  },
+  {
+    "id": "sanliurfa",
+    "name": "Sanliurfa",
+    "nameTr": "Şanlıurfa",
+    "countryCode": "TR",
+    "latitude": 37.17,
+    "longitude": 38.79
+  },
+  {
+    "id": "sharm",
+    "name": "Sharm El Sheikh",
+    "nameTr": "Şarm El-Şeyh",
+    "countryCode": "EG",
+    "latitude": 27.92,
+    "longitude": 34.33,
+    "nearestAirportIata": "SSH"
+  },
+  {
+    "id": "tallinn",
+    "name": "Tallinn",
+    "nameTr": "Tallinn",
+    "countryCode": "EE",
+    "latitude": 59.44,
+    "longitude": 24.75,
+    "nearestAirportIata": "TLL"
+  },
+  {
+    "id": "tel-aviv",
+    "name": "Tel Aviv",
+    "nameTr": "Tel Aviv",
+    "countryCode": "IL",
+    "latitude": 32.09,
+    "longitude": 34.78,
+    "nearestAirportIata": "TLV"
+  },
+  {
+    "id": "tenerife",
+    "name": "Tenerife",
+    "nameTr": "Tenerife",
+    "countryCode": "ES",
+    "latitude": 28.29,
+    "longitude": -16.63,
+    "nearestAirportIata": "TFS"
+  },
+  {
+    "id": "tbilisi",
+    "name": "Tbilisi",
+    "nameTr": "Tiflis",
+    "countryCode": "GE",
+    "latitude": 41.72,
+    "longitude": 44.83,
+    "nearestAirportIata": "TBS"
+  },
+  {
+    "id": "tirana",
+    "name": "Tirana",
+    "nameTr": "Tiran",
+    "countryCode": "AL",
+    "latitude": 41.33,
+    "longitude": 19.82,
+    "nearestAirportIata": "TIA"
+  },
+  {
+    "id": "tokyo",
+    "name": "Tokyo",
+    "nameTr": "Tokyo",
+    "countryCode": "JP",
+    "latitude": 35.68,
+    "longitude": 139.69,
+    "nearestAirportIata": "NRT"
+  },
+  {
+    "id": "toledo",
+    "name": "Toledo",
+    "nameTr": "Toledo",
+    "countryCode": "ES",
+    "latitude": 39.86,
+    "longitude": -4.02
+  },
+  {
+    "id": "turin",
+    "name": "Turin",
+    "nameTr": "Torino",
+    "countryCode": "IT",
+    "latitude": 45.07,
+    "longitude": 7.69,
+    "nearestAirportIata": "TRN"
+  },
+  {
+    "id": "toronto",
+    "name": "Toronto",
+    "nameTr": "Toronto",
+    "countryCode": "CA",
+    "latitude": 43.65,
+    "longitude": -79.38,
+    "nearestAirportIata": "YYZ"
+  },
+  {
+    "id": "toulouse",
+    "name": "Toulouse",
+    "nameTr": "Toulouse",
+    "countryCode": "FR",
+    "latitude": 43.6,
+    "longitude": 1.44,
+    "nearestAirportIata": "TLS"
+  },
+  {
+    "id": "trabzon",
+    "name": "Trabzon",
+    "nameTr": "Trabzon",
+    "countryCode": "TR",
+    "latitude": 41,
+    "longitude": 39.72,
+    "nearestAirportIata": "TZX"
+  },
+  {
+    "id": "trieste",
+    "name": "Trieste",
+    "nameTr": "Trieste",
+    "countryCode": "IT",
+    "latitude": 45.65,
+    "longitude": 13.78,
+    "nearestAirportIata": "TRS"
+  },
+  {
+    "id": "tromso",
+    "name": "Tromso",
+    "nameTr": "Tromsø",
+    "countryCode": "NO",
+    "latitude": 69.65,
+    "longitude": 18.96,
+    "nearestAirportIata": "TOS"
+  },
+  {
+    "id": "turku",
+    "name": "Turku",
+    "nameTr": "Turku",
+    "countryCode": "FI",
+    "latitude": 60.45,
+    "longitude": 22.27,
+    "nearestAirportIata": "TKU"
+  },
+  {
+    "id": "uppsala",
+    "name": "Uppsala",
+    "nameTr": "Uppsala",
+    "countryCode": "SE",
+    "latitude": 59.86,
+    "longitude": 17.64
+  },
+  {
+    "id": "utrecht",
+    "name": "Utrecht",
+    "nameTr": "Utrecht",
+    "countryCode": "NL",
+    "latitude": 52.09,
+    "longitude": 5.12
+  },
+  {
+    "id": "valencia",
+    "name": "Valencia",
+    "nameTr": "Valencia",
+    "countryCode": "ES",
+    "latitude": 39.47,
+    "longitude": -0.38,
+    "nearestAirportIata": "VLC"
+  },
+  {
+    "id": "valletta",
+    "name": "Valletta",
+    "nameTr": "Valletta",
+    "countryCode": "MT",
+    "latitude": 35.9,
+    "longitude": 14.51,
+    "nearestAirportIata": "MLA"
+  },
+  {
+    "id": "vancouver",
+    "name": "Vancouver",
+    "nameTr": "Vancouver",
+    "countryCode": "CA",
+    "latitude": 49.28,
+    "longitude": -123.12,
+    "nearestAirportIata": "YVR"
+  },
+  {
+    "id": "varna",
+    "name": "Varna",
+    "nameTr": "Varna",
+    "countryCode": "BG",
+    "latitude": 43.21,
+    "longitude": 27.91,
+    "nearestAirportIata": "VAR"
+  },
+  {
+    "id": "warsaw",
+    "name": "Warsaw",
+    "nameTr": "Varşova",
+    "countryCode": "PL",
+    "latitude": 52.23,
+    "longitude": 21.01,
+    "nearestAirportIata": "WAW"
+  },
+  {
+    "id": "venice",
+    "name": "Venice",
+    "nameTr": "Venedik",
+    "countryCode": "IT",
+    "latitude": 45.44,
+    "longitude": 12.32,
+    "nearestAirportIata": "VCE"
+  },
+  {
+    "id": "verona",
+    "name": "Verona",
+    "nameTr": "Verona",
+    "countryCode": "IT",
+    "latitude": 45.44,
+    "longitude": 10.99,
+    "nearestAirportIata": "VRN"
+  },
+  {
+    "id": "vilnius",
+    "name": "Vilnius",
+    "nameTr": "Vilnius",
+    "countryCode": "LT",
+    "latitude": 54.69,
+    "longitude": 25.28,
+    "nearestAirportIata": "VNO"
+  },
+  {
+    "id": "vienna",
+    "name": "Vienna",
+    "nameTr": "Viyana",
+    "countryCode": "AT",
+    "latitude": 48.21,
+    "longitude": 16.37,
+    "nearestAirportIata": "VIE"
+  },
+  {
+    "id": "washington",
+    "name": "Washington DC",
+    "nameTr": "Washington",
+    "countryCode": "US",
+    "latitude": 38.91,
+    "longitude": -77.04,
+    "nearestAirportIata": "IAD"
+  },
+  {
+    "id": "wellington",
+    "name": "Wellington",
+    "nameTr": "Wellington",
+    "countryCode": "NZ",
+    "latitude": -41.29,
+    "longitude": 174.78,
+    "nearestAirportIata": "WLG"
+  },
+  {
+    "id": "wroclaw",
+    "name": "Wroclaw",
+    "nameTr": "Wroclaw",
+    "countryCode": "PL",
+    "latitude": 51.11,
+    "longitude": 17.04,
+    "nearestAirportIata": "WRO"
+  },
+  {
+    "id": "delhi",
+    "name": "New Delhi",
+    "nameTr": "Yeni Delhi",
+    "countryCode": "IN",
+    "latitude": 28.61,
+    "longitude": 77.21,
+    "nearestAirportIata": "DEL"
+  },
+  {
+    "id": "york",
+    "name": "York",
+    "nameTr": "York",
+    "countryCode": "GB",
+    "latitude": 53.96,
+    "longitude": -1.08
+  },
+  {
+    "id": "zadar",
+    "name": "Zadar",
+    "nameTr": "Zadar",
+    "countryCode": "HR",
+    "latitude": 44.12,
+    "longitude": 15.23,
+    "nearestAirportIata": "ZAD"
+  },
+  {
+    "id": "zagreb",
+    "name": "Zagreb",
+    "nameTr": "Zagreb",
+    "countryCode": "HR",
+    "latitude": 45.81,
+    "longitude": 15.98,
+    "nearestAirportIata": "ZAG"
+  },
+  {
+    "id": "zakopane",
+    "name": "Zakopane",
+    "nameTr": "Zakopane",
+    "countryCode": "PL",
+    "latitude": 49.3,
+    "longitude": 19.95
+  },
+  {
+    "id": "zakynthos",
+    "name": "Zakynthos",
+    "nameTr": "Zakynthos",
+    "countryCode": "GR",
+    "latitude": 37.79,
+    "longitude": 20.9,
+    "nearestAirportIata": "ZTH"
+  },
+  {
+    "id": "zaragoza",
+    "name": "Zaragoza",
+    "nameTr": "Zaragoza",
+    "countryCode": "ES",
+    "latitude": 41.65,
+    "longitude": -0.88,
+    "nearestAirportIata": "ZAZ"
+  },
+  {
+    "id": "zermatt",
+    "name": "Zermatt",
+    "nameTr": "Zermatt",
+    "countryCode": "CH",
+    "latitude": 46.02,
+    "longitude": 7.75
+  },
+  {
+    "id": "zurich",
+    "name": "Zurich",
+    "nameTr": "Zürih",
+    "countryCode": "CH",
+    "latitude": 47.38,
+    "longitude": 8.54,
+    "nearestAirportIata": "ZRH"
+  }
+]

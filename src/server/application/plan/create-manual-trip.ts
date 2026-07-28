@@ -3,7 +3,11 @@ import "server-only";
 import { AppError } from "@/lib/errors";
 import type { CreateManualTripInput } from "@/features/plan/schemas";
 import { toTripDetailDto, type TripDetailDto } from "@/features/trips/dto";
-import { inclusiveDayCount, parseDateOnly, formatDateOnly } from "@/server/domain/trips/date-only";
+import {
+  inclusiveDayCount,
+  parseDateOnly,
+  formatDateOnly,
+} from "@/server/domain/trips/date-only";
 import { resolveCitiesByIds } from "@/server/domain/places/catalog";
 import { findActiveDestinationBySlug } from "@/server/repositories/destination-repository";
 import { prisma, tripDetailInclude } from "@/server/repositories/trip-repository";
@@ -27,14 +31,10 @@ export async function createManualTripService(input: {
   const endDate = parseDateOnly(input.data.endDate);
   inclusiveDayCount(startDate, endDate);
   const baseDays = generateDaysForRange(startDate, endDate);
-  const notesByDate = new Map(
-    input.data.days.map((day) => [day.date, day] as const),
-  );
+  const notesByDate = new Map(input.data.days.map((day) => [day.date, day] as const));
 
   const stopNames =
-    cities.length > 0
-      ? cities.map((c) => c.nameTr).join(" · ")
-      : freeNames.join(" · ");
+    cities.length > 0 ? cities.map((c) => c.nameTr).join(" · ") : freeNames.join(" · ");
   const primary = cities[0] ?? null;
 
   let destinationId: string | null = null;
@@ -56,7 +56,7 @@ export async function createManualTripService(input: {
               position: index,
               name: city.nameTr,
               countryCode: city.countryCode,
-              iataCode: city.iata,
+              iataCode: city.iata ?? null,
               destinationId: destId,
             };
           }),

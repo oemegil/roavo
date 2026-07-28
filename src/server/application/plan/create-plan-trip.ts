@@ -67,7 +67,7 @@ export async function createPlanTripService(input: {
     position: number;
     name: string;
     countryCode: string;
-    iataCode: string;
+    iataCode: string | null;
     destinationId: string | null;
   }> = [];
   for (let index = 0; index < cities.length; index += 1) {
@@ -81,7 +81,7 @@ export async function createPlanTripService(input: {
       position: index,
       name: city.nameTr,
       countryCode: city.countryCode,
-      iataCode: city.iata,
+      iataCode: city.iata ?? null,
       destinationId: destId,
     });
   }

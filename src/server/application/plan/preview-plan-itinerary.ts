@@ -19,6 +19,8 @@ import {
 import { generateDaysForRange } from "@/server/domain/trips/day-planner";
 import { resolveCitiesByIds } from "@/server/domain/places/catalog";
 import { countUserAiOperationsToday } from "@/server/repositories/ai-repository";
+import { geocodeGeneratedItineraryPlaces } from "@/server/application/plan/persist-generated-itinerary";
+import type { PlanMapPin } from "@/features/maps/google-export";
 
 const WEEKDAYS_EN = [
   "Sunday",
@@ -55,7 +57,11 @@ export async function previewPlanItineraryService(input: {
   userId: string;
   data: PreviewPlanItineraryInput;
   correlationId?: string;
-}): Promise<{ itinerary: GeneratedItinerary; operationId: string }> {
+}): Promise<{
+  itinerary: GeneratedItinerary;
+  operationId: string;
+  mapPins: PlanMapPin[];
+}> {
   const log = createRequestLogger(input.correlationId ?? "plan-preview");
   assertDailyLimit(await countUserAiOperationsToday(input.userId));
 
@@ -123,7 +129,7 @@ export async function previewPlanItineraryService(input: {
         stops: cities.map((city, position) => ({
           name: city.nameTr,
           countryCode: city.countryCode,
-          iataCode: city.iata,
+          iataCode: city.iata ?? null,
           position,
         })),
         flightRoute: input.data.flight?.routeSummary ?? null,
@@ -187,8 +193,28 @@ export async function previewPlanItineraryService(input: {
     dayCount: executed.output.days.length,
   });
 
+  const geocoded = await geocodeGeneratedItineraryPlaces(executed.output);
+  const mapPins: PlanMapPin[] = [];
+  let cursor = 0;
+  for (const day of executed.output.days) {
+    for (const place of day.places ?? []) {
+      const hit = geocoded[cursor++];
+      if (!hit?.found || hit.latitude == null || hit.longitude == null) continue;
+      mapPins.push({
+        id: `preview-${day.dayNumber}-${place.name}-${mapPins.length}`,
+        name: place.name,
+        latitude: hit.latitude,
+        longitude: hit.longitude,
+        subtitle: place.city ?? day.cityName ?? null,
+        dayNumber: day.dayNumber,
+        dayLabel: `Gün ${day.dayNumber}${day.cityName ? ` · ${day.cityName}` : ""}`,
+      });
+    }
+  }
+
   return {
     itinerary: executed.output,
     operationId: executed.operationId,
+    mapPins,
   };
 }

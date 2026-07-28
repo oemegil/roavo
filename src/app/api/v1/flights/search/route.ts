@@ -16,10 +16,13 @@ export async function POST(request: Request) {
 
   try {
     const body = await parseJsonBody(request, flightSearchSchema);
-    const cities =
+    const citiesRaw =
       body.mode === "region" && body.regionId
         ? listPopularCitiesInRegion(body.regionId)
         : resolveCitiesByIds(body.cityIds);
+    const cities = citiesRaw.filter((city): city is typeof city & { iata: string } =>
+      Boolean(city.iata),
+    );
 
     if (cities.length === 0) {
       throw new AppError({
@@ -45,7 +48,8 @@ export async function POST(request: Request) {
     if (!result.best) {
       throw new AppError({
         code: "NOT_FOUND",
-        message: "Bu rota için uçuş bulunamadı. Tarihleri veya şehirleri değiştirmeyi dene.",
+        message:
+          "Bu rota için uçuş bulunamadı. Tarihleri veya şehirleri değiştirmeyi dene.",
         status: 404,
       });
     }

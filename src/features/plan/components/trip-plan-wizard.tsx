@@ -21,10 +21,11 @@ type City = {
   name: string;
   nameTr: string;
   countryCode: string;
-  iata: string;
+  iata: string | null;
   destinationSlug: string | null;
   regionId?: string;
   countryId?: string;
+  hasAirport?: boolean;
 };
 type Origin = {
   id: string;
@@ -109,8 +110,12 @@ export function TripPlanWizard() {
   const [regions, setRegions] = useState<Region[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
   const [catalogCities, setCatalogCities] = useState<City[]>([]);
+  const [knownCities, setKnownCities] = useState<City[]>([]);
   const [selectedCityIds, setSelectedCityIds] = useState<string[]>([]);
   const [cityComboValue, setCityComboValue] = useState("");
+  const [cityQuery, setCityQuery] = useState("");
+  const [planCitySuggestions, setPlanCitySuggestions] = useState<City[]>([]);
+  const [planCitySearching, setPlanCitySearching] = useState(false);
 
   const [flightOptions, setFlightOptions] = useState<FlightOptionDto[]>([]);
   const [selectedFlight, setSelectedFlight] = useState<FlightOptionDto | null>(null);
@@ -134,6 +139,17 @@ export function TripPlanWizard() {
       places?: Array<{ name: string; city?: string | null }>;
     }>;
   } | null>(null);
+  const [previewMapPins, setPreviewMapPins] = useState<
+    Array<{
+      id: string;
+      name: string;
+      latitude: number;
+      longitude: number;
+      subtitle?: string | null;
+      dayNumber?: number;
+      dayLabel?: string;
+    }>
+  >([]);
   const [selectedPreviewDay, setSelectedPreviewDay] = useState(0);
 
   // Manual trip
@@ -171,11 +187,14 @@ export function TripPlanWizard() {
   }, [originQuery, selectedOrigin]);
 
   const selectedCities = useMemo(() => {
+    const directory = new Map<string, City>();
+    for (const city of catalogCities) directory.set(city.id, city);
+    for (const city of knownCities) directory.set(city.id, city);
     const uniqueIds = [...new Set(selectedCityIds)];
     return uniqueIds
-      .map((id) => catalogCities.find((city) => city.id === id))
+      .map((id) => directory.get(id))
       .filter((city): city is City => Boolean(city));
-  }, [selectedCityIds, catalogCities]);
+  }, [selectedCityIds, catalogCities, knownCities]);
 
   const comboCities = useMemo(() => {
     if (mode === "tickets" && selectedRegion) {
@@ -183,6 +202,40 @@ export function TripPlanWizard() {
     }
     return catalogCities;
   }, [catalogCities, mode, selectedRegion]);
+
+  useEffect(() => {
+    if (mode === "tickets") return;
+    const q = cityQuery.trim();
+    const timer = setTimeout(() => {
+      setPlanCitySearching(true);
+      fetch(`/api/v1/places/plan-cities?q=${encodeURIComponent(q)}`)
+        .then((r) => r.json())
+        .then((payload) => {
+          const cities = (payload.cities ?? []).map(
+            (city: {
+              id: string;
+              name: string;
+              nameTr: string;
+              countryCode: string;
+              iata: string | null;
+              hasAirport?: boolean;
+            }) => ({
+              id: city.id,
+              name: city.name,
+              nameTr: city.nameTr,
+              countryCode: city.countryCode,
+              iata: city.iata,
+              destinationSlug: null,
+              hasAirport: city.hasAirport,
+            }),
+          ) as City[];
+          setPlanCitySuggestions(cities);
+        })
+        .catch(() => setPlanCitySuggestions([]))
+        .finally(() => setPlanCitySearching(false));
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [cityQuery, mode]);
 
   const dayCount = useMemo(() => {
     if (!startDate || !endDate || endDate < startDate) return 0;
@@ -226,6 +279,9 @@ export function TripPlanWizard() {
     setSelectedRegion(null);
     setSelectedCityIds([]);
     setCityComboValue("");
+    setCityQuery("");
+    setPlanCitySuggestions([]);
+    setKnownCities([]);
     setFlightOptions([]);
     setSelectedFlight(null);
     setShowFlightPicker(false);
@@ -233,6 +289,7 @@ export function TripPlanWizard() {
     setInterests([]);
     setPlanTitle("");
     setPlanPreview(null);
+    setPreviewMapPins([]);
     setSelectedPreviewDay(0);
     setManualTitle("");
     setManualDayNotes({});
@@ -252,6 +309,7 @@ export function TripPlanWizard() {
       resetModeForm();
     } else {
       setPlanPreview(null);
+      setPreviewMapPins([]);
       setSelectedPreviewDay(0);
       setShowFlightPicker(false);
       resetFeedback();
@@ -269,7 +327,7 @@ export function TripPlanWizard() {
   function cityIdsFromFlight(flight: FlightOptionDto) {
     const iatas = new Set([flight.entryCity.iata, flight.exitCity.iata]);
     const matched = catalogCities
-      .filter((city) => iatas.has(city.iata))
+      .filter((city) => city.iata != null && iatas.has(city.iata))
       .map((city) => city.id);
     return [...new Set(matched)];
   }
@@ -282,6 +340,7 @@ export function TripPlanWizard() {
       setSelectedCityIds(matchedCityIds);
     }
     setPlanPreview(null);
+    setPreviewMapPins([]);
     setSelectedPreviewDay(0);
     setCreatedTripId(null);
     setError(null);
@@ -294,14 +353,25 @@ export function TripPlanWizard() {
     });
   }
 
-  function addCityById(cityId: string) {
-    const city = catalogCities.find((c) => c.id === cityId);
-    if (!city) return;
+  function addCity(city: City) {
+    setKnownCities((prev) =>
+      prev.some((item) => item.id === city.id) ? prev : [...prev, city],
+    );
     setSelectedCityIds((prev) => {
       if (prev.includes(city.id) || prev.length >= 8) return prev;
       return [...prev, city.id];
     });
     setCityComboValue("");
+    setCityQuery("");
+  }
+
+  function addCityById(cityId: string) {
+    const city =
+      catalogCities.find((c) => c.id === cityId) ??
+      knownCities.find((c) => c.id === cityId) ??
+      planCitySuggestions.find((c) => c.id === cityId);
+    if (!city) return;
+    addCity(city);
   }
 
   function removeCity(cityId: string) {
@@ -445,6 +515,7 @@ export function TripPlanWizard() {
     setPending(true);
     resetFeedback();
     setPlanPreview(null);
+    setPreviewMapPins([]);
 
     const response = await fetch("/api/v1/plan/preview-itinerary", {
       method: "POST",
@@ -463,6 +534,7 @@ export function TripPlanWizard() {
     }
 
     setPlanPreview(payload.itinerary);
+    setPreviewMapPins(payload.mapPins ?? []);
     setSelectedPreviewDay(0);
   }
 
@@ -495,6 +567,7 @@ export function TripPlanWizard() {
 
     const tripId = payload.trip?.id as string | undefined;
     setPlanPreview(null);
+    setPreviewMapPins([]);
     router.push(tripId ? `/trips/${tripId}` : "/trips");
     router.refresh();
   }
@@ -657,26 +730,67 @@ export function TripPlanWizard() {
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="cityCombo">Şehir ekle</Label>
-        <select
-          id="cityCombo"
-          className="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
-          value={cityComboValue}
-          onChange={(event) => {
-            if (event.target.value) addCityById(event.target.value);
-          }}
-        >
-          <option value="">Şehir seç…</option>
-          {comboCities.map((city) => (
-            <option
-              key={city.id}
-              value={city.id}
-              disabled={selectedCityIds.includes(city.id)}
-            >
-              {city.nameTr} ({city.iata})
-            </option>
-          ))}
-        </select>
+        <Label htmlFor={mode === "tickets" ? "cityCombo" : "citySearch"}>
+          Şehir ekle
+        </Label>
+        {mode === "tickets" ? (
+          <select
+            id="cityCombo"
+            className="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
+            value={cityComboValue}
+            onChange={(event) => {
+              if (event.target.value) addCityById(event.target.value);
+            }}
+          >
+            <option value="">Havalimanı olan şehir seç…</option>
+            {comboCities.map((city) => (
+              <option
+                key={city.id}
+                value={city.id}
+                disabled={selectedCityIds.includes(city.id)}
+              >
+                {city.nameTr} ({city.iata})
+              </option>
+            ))}
+          </select>
+        ) : (
+          <>
+            <Input
+              id="citySearch"
+              value={cityQuery}
+              placeholder="Şehir ara: Brugge, Kyoto, Kapadokya…"
+              onChange={(event) => setCityQuery(event.target.value)}
+            />
+            <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto">
+              {planCitySuggestions.length === 0 && cityQuery.trim() ? (
+                <p className="text-muted-foreground text-xs">
+                  {planCitySearching ? "Aranıyor…" : "Sonuç yok — başka yazım dene."}
+                </p>
+              ) : null}
+              {planCitySuggestions.map((city) => (
+                <Button
+                  key={city.id}
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={selectedCityIds.includes(city.id)}
+                  onClick={() => addCity(city)}
+                >
+                  {city.nameTr}
+                  <span className="text-muted-foreground ml-1 text-[10px]">
+                    {city.countryCode}
+                    {city.iata ? ` · ${city.iata}` : ""}
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </>
+        )}
+        <p className="text-muted-foreground text-xs">
+          {mode === "tickets"
+            ? "Bilet aramasında yalnızca havalimanı olan şehirler listelenir."
+            : "Gezi planında havalimanı olmayan şehirler de seçilebilir — yazarak ara."}
+        </p>
         {selectedCities.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {selectedCities.map((city) => (
@@ -690,11 +804,7 @@ export function TripPlanWizard() {
               </button>
             ))}
           </div>
-        ) : (
-          <p className="text-muted-foreground text-xs">
-            Madrid, Sevilla, Barselona gibi birden fazla şehir ekleyebilirsin.
-          </p>
-        )}
+        ) : null}
       </div>
 
       {mode === "plan" ? (
@@ -965,19 +1075,7 @@ export function TripPlanWizard() {
             <p className="text-muted-foreground text-xs">
               Henüz kaydedilmedi. Beğenirsen “Planı kaydet” ile gezilerine ekle.
             </p>
-            <ShowOnMapButton
-              planTitle={
-                planPreview.titleSuggestion?.trim() || planTitle.trim() || "Roavo planı"
-              }
-              places={planPreview.days.flatMap((day) =>
-                (day.places ?? []).map((place) => ({
-                  name: place.name,
-                  city: place.city ?? day.cityName ?? null,
-                  dayNumber: day.dayNumber,
-                  dayLabel: `Gün ${day.dayNumber}${day.cityName ? ` · ${day.cityName}` : ""}`,
-                })),
-              )}
-            />
+            <ShowOnMapButton readyPins={previewMapPins} />
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -1115,6 +1213,7 @@ export function TripPlanWizard() {
                   disabled={pending}
                   onClick={() => {
                     setPlanPreview(null);
+                    setPreviewMapPins([]);
                     resetFeedback();
                   }}
                 >
