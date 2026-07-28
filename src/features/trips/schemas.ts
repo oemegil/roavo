@@ -8,9 +8,7 @@ import {
 } from "@/server/domain/trips/constants";
 import { isDateOnlyString } from "@/server/domain/trips/date-only";
 
-const dateOnlySchema = z
-  .string()
-  .refine(isDateOnlyString, "Use YYYY-MM-DD date format.");
+const dateOnlySchema = z.string().refine(isDateOnlyString, "Use YYYY-MM-DD date format.");
 
 const currencySchema = z.enum(SUPPORTED_CURRENCIES);
 const destinationTypeSchema = z.enum(DESTINATION_TYPES);
@@ -60,7 +58,8 @@ export const createTripSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["destinationName"],
-        message: "Provide either a catalog destinationId or a manual destination name, not both.",
+        message:
+          "Provide either a catalog destinationId or a manual destination name, not both.",
       });
     }
   });
@@ -69,7 +68,12 @@ export type CreateTripInput = z.infer<typeof createTripSchema>;
 
 export const updateTripSchema = z
   .object({
-    title: z.string().trim().min(TRIP_LIMITS.titleMin).max(TRIP_LIMITS.titleMax).optional(),
+    title: z
+      .string()
+      .trim()
+      .min(TRIP_LIMITS.titleMin)
+      .max(TRIP_LIMITS.titleMax)
+      .optional(),
     description: z.string().trim().max(TRIP_LIMITS.descriptionMax).nullable().optional(),
     originName: z.string().trim().min(1).max(120).optional(),
     originCountryCode: countryCodeSchema.nullable().optional(),
@@ -144,6 +148,8 @@ export const createItineraryItemSchema = z
     description: z.string().trim().max(TRIP_LIMITS.itemDescriptionMax).optional(),
     locationName: z.string().trim().max(160).optional(),
     externalPlaceId: z.string().trim().max(120).optional(),
+    latitude: z.number().min(-90).max(90).nullable().optional(),
+    longitude: z.number().min(-180).max(180).nullable().optional(),
     startTime: hhMmSchema.optional(),
     endTime: hhMmSchema.optional(),
     durationMinutes: z
@@ -177,6 +183,15 @@ export const createItineraryItemSchema = z
         message: "End time must be on or after start time.",
       });
     }
+    const hasLat = data.latitude != null;
+    const hasLng = data.longitude != null;
+    if (hasLat !== hasLng) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["latitude"],
+        message: "Latitude and longitude must be provided together.",
+      });
+    }
   });
 
 export const updateItineraryItemSchema = z
@@ -198,7 +213,9 @@ export const updateItineraryItemSchema = z
     title: z.string().trim().min(1).max(120).optional(),
     description: z.string().trim().max(TRIP_LIMITS.itemDescriptionMax).optional(),
     locationName: z.string().trim().max(160).optional(),
-    externalPlaceId: z.string().trim().max(120).optional(),
+    externalPlaceId: z.string().trim().max(120).nullable().optional(),
+    latitude: z.number().min(-90).max(90).nullable().optional(),
+    longitude: z.number().min(-180).max(180).nullable().optional(),
     startTime: hhMmSchema.optional(),
     endTime: hhMmSchema.optional(),
     durationMinutes: z
@@ -230,6 +247,15 @@ export const updateItineraryItemSchema = z
         code: "custom",
         path: ["endTime"],
         message: "End time must be on or after start time.",
+      });
+    }
+    const latProvided = data.latitude !== undefined;
+    const lngProvided = data.longitude !== undefined;
+    if (latProvided !== lngProvided) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["latitude"],
+        message: "Latitude and longitude must be provided together.",
       });
     }
   });

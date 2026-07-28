@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 function toSelection(trip: TripDetailDto): DestinationSelection {
@@ -174,22 +175,22 @@ export function TripSettingsForm({ trip }: { trip: TripDetailDto }) {
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="visibility">Görünürlük</Label>
-        <select
-          id="visibility"
-          className="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          value={visibility}
-          onChange={(e) =>
-            setVisibility(e.target.value === "PUBLIC" ? "PUBLIC" : "PRIVATE")
-          }
-          disabled={trip.status === "ARCHIVED"}
-        >
-          <option value="PRIVATE">Özel — sadece sen</option>
-          <option value="PUBLIC">Herkese açık — Keşfet’te görünür</option>
-        </select>
-        <p className="text-muted-foreground text-sm">
-          Public gezilerde uçuş bilgisi paylaşılmaz; sadece plan görünür.
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 space-y-1">
+            <Label htmlFor="visibility">Keşfet’te paylaş</Label>
+            <p className="text-muted-foreground text-sm">
+              {visibility === "PUBLIC"
+                ? "Herkese açık — uçuş bilgisi paylaşılmaz."
+                : "Özel — sadece sen görürsün."}
+            </p>
+          </div>
+          <Switch
+            id="visibility"
+            checked={visibility === "PUBLIC"}
+            disabled={trip.status === "ARCHIVED"}
+            onCheckedChange={(checked) => setVisibility(checked ? "PUBLIC" : "PRIVATE")}
+          />
+        </div>
       </div>
       {error ? (
         <Alert variant="destructive">

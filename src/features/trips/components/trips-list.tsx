@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Heart, MessageCircle } from "lucide-react";
 
+import { TripCommentsSection } from "@/features/traveler/components/trip-comments";
 import type { TripSummaryDto } from "@/features/trips/dto";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,8 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 
 export function TripsListClient({
   initialStatus,
@@ -25,12 +28,14 @@ export function TripsListClient({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [openCommentsId, setOpenCommentsId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);
       setError(null);
+      setOpenCommentsId(null);
       const response = await fetch(`/api/v1/trips?status=${status}`);
       const payload = await response.json().catch(() => null);
       if (!response.ok) {
@@ -79,6 +84,9 @@ export function TripsListClient({
           : row,
       ),
     );
+    if (visibility === "PRIVATE" && openCommentsId === trip.id) {
+      setOpenCommentsId(null);
+    }
   }
 
   return (
@@ -87,7 +95,8 @@ export function TripsListClient({
         <div className="space-y-2">
           <h1 className="text-heading">Gezilerin</h1>
           <p className="text-muted-foreground text-body">
-            Yeni geziler özel başlar. Keşfet’te paylaşmak için herkese açık yap.
+            Yeni geziler özel başlar. Keşfet’te paylaşınca beğeni ve yorumları burada
+            görürsün.
           </p>
         </div>
         <Button asChild className="w-full sm:w-auto">
@@ -151,11 +160,16 @@ export function TripsListClient({
       <div className="grid gap-4 sm:grid-cols-2">
         {trips.map((trip) => {
           const visibility = trip.visibility === "PUBLIC" ? "PUBLIC" : "PRIVATE";
-          const groupName = `trip-visibility-${trip.id}`;
+          const isPublic = visibility === "PUBLIC";
+          const commentsOpen = openCommentsId === trip.id;
           return (
             <Card
               key={trip.id}
-              className="hover:border-primary/40 h-full transition-colors"
+              className={
+                commentsOpen
+                  ? "hover:border-primary/40 transition-colors sm:col-span-2"
+                  : "hover:border-primary/40 h-full transition-colors"
+              }
             >
               <CardHeader>
                 <CardTitle className="line-clamp-2">
@@ -182,39 +196,69 @@ export function TripsListClient({
                     {trip.dayCount} gün · {trip.itemCount} aktivite
                   </p>
                 </div>
+
                 {trip.status !== "ARCHIVED" ? (
-                  <fieldset className="space-y-2" disabled={togglingId === trip.id}>
-                    <legend className="text-foreground text-sm font-medium">
-                      Görünürlük
-                    </legend>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-foreground flex cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name={groupName}
-                          value="PRIVATE"
-                          checked={visibility === "PRIVATE"}
-                          onChange={() => void setVisibility(trip, "PRIVATE")}
-                          className="size-4"
-                        />
-                        <span>Özel</span>
-                      </label>
-                      <label className="text-foreground flex cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name={groupName}
-                          value="PUBLIC"
-                          checked={visibility === "PUBLIC"}
-                          onChange={() => void setVisibility(trip, "PUBLIC")}
-                          className="size-4"
-                        />
-                        <span>Herkese açık (Keşfet)</span>
-                      </label>
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <div className="min-w-0">
+                      <p className="text-foreground text-sm font-medium">
+                        Keşfet’te paylaş
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {isPublic ? "Herkese açık" : "Şu an özel"}
+                      </p>
                     </div>
-                  </fieldset>
+                    <Switch
+                      checked={isPublic}
+                      disabled={togglingId === trip.id}
+                      aria-label={`${trip.title} için Keşfet paylaşımı`}
+                      onCheckedChange={(checked) =>
+                        void setVisibility(trip, checked ? "PUBLIC" : "PRIVATE")
+                      }
+                    />
+                  </div>
                 ) : (
-                  <p>{visibility === "PUBLIC" ? "Herkese açıktı" : "Özeldi"}</p>
+                  <p>{isPublic ? "Herkese açıktı" : "Özeldi"}</p>
                 )}
+
+                {isPublic ? (
+                  <div className="border-border space-y-3 border-t pt-3">
+                    <div className="text-foreground flex flex-wrap items-center gap-3">
+                      <span className="inline-flex items-center gap-1.5 text-sm">
+                        <Heart className="size-4" aria-hidden />
+                        {trip.likeCount} beğeni
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-sm">
+                        <MessageCircle className="size-4" aria-hidden />
+                        {trip.commentCount} yorum
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="ml-auto px-2"
+                        onClick={() => setOpenCommentsId(commentsOpen ? null : trip.id)}
+                      >
+                        {commentsOpen ? "Yorumları gizle" : "Yorumları gör"}
+                      </Button>
+                    </div>
+
+                    {commentsOpen ? (
+                      <TripCommentsSection
+                        key={trip.id}
+                        tripId={trip.id}
+                        initialCommentCount={trip.commentCount}
+                        variant="embedded"
+                        onCommentCountChange={(count) =>
+                          setTrips((prev) =>
+                            prev.map((row) =>
+                              row.id === trip.id ? { ...row, commentCount: count } : row,
+                            ),
+                          )
+                        }
+                      />
+                    ) : null}
+                  </div>
+                ) : null}
               </CardContent>
             </Card>
           );

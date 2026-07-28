@@ -135,6 +135,8 @@ export async function createItineraryItemService(input: {
       description: input.data.description,
       locationName: input.data.locationName,
       externalPlaceId: input.data.externalPlaceId,
+      latitude: input.data.latitude ?? null,
+      longitude: input.data.longitude ?? null,
       startMinutes: times.startMinutes ?? null,
       endMinutes: times.endMinutes ?? null,
       durationMinutes: times.durationMinutes ?? null,
@@ -170,6 +172,7 @@ export async function updateItineraryItemService(input: {
 
   const times = mapItemTimes(input.data);
 
+  // Text-only updates omit lat/lng. When both are sent (place re-pick), pins update.
   await prisma.itineraryItem.update({
     where: { id: item.id },
     data: {
@@ -184,6 +187,8 @@ export async function updateItineraryItemService(input: {
       ...(input.data.externalPlaceId !== undefined
         ? { externalPlaceId: input.data.externalPlaceId }
         : {}),
+      ...(input.data.latitude !== undefined ? { latitude: input.data.latitude } : {}),
+      ...(input.data.longitude !== undefined ? { longitude: input.data.longitude } : {}),
       ...(input.data.startTime !== undefined
         ? { startMinutes: times.startMinutes ?? null }
         : {}),
@@ -313,9 +318,7 @@ export async function moveItineraryItemService(input: {
   }
 
   await prisma.$transaction(async (tx) => {
-    const sourceIds = sourceDay.items
-      .map((row) => row.id)
-      .filter((id) => id !== item.id);
+    const sourceIds = sourceDay.items.map((row) => row.id).filter((id) => id !== item.id);
     const targetIds =
       sourceDay.id === targetDay.id
         ? insertAtPositions(

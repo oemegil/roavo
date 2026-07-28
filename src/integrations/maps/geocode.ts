@@ -6,6 +6,7 @@ import {
   buildGeocodeQuery,
   normalizeGeocodeQueryKey,
   searchNominatim,
+  searchNominatimMany,
 } from "@/integrations/maps/nominatim";
 import { prisma } from "@/server/infrastructure/database";
 
@@ -113,4 +114,35 @@ export async function geocodePlaces(
   }
 
   return results;
+}
+
+export type PlaceSearchCandidate = {
+  id: string;
+  name: string;
+  displayName: string;
+  latitude: number;
+  longitude: number;
+  osmId: string;
+};
+
+/** Live Nominatim multi-hit search for manual place picking (not cached as single hit). */
+export async function searchPlaceCandidates(
+  input: { q: string; city?: string | null; limit?: number },
+  options?: { signal?: AbortSignal },
+): Promise<PlaceSearchCandidate[]> {
+  const q = input.q.trim();
+  if (!q) return [];
+  const query = buildGeocodeQuery(q, input.city);
+  const hits = await searchNominatimMany(query, {
+    signal: options?.signal,
+    limit: input.limit ?? 5,
+  });
+  return hits.map((hit, index) => ({
+    id: hit.osmId || `${hit.latitude},${hit.longitude},${index}`,
+    name: q,
+    displayName: hit.displayName,
+    latitude: hit.latitude,
+    longitude: hit.longitude,
+    osmId: hit.osmId,
+  }));
 }

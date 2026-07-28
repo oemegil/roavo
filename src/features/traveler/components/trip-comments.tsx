@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { COMMENT_BODY_MAX } from "@/features/traveler/schemas";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 type TripComment = {
   id: string;
@@ -30,9 +31,15 @@ type TripComment = {
 export function TripCommentsSection({
   tripId,
   initialCommentCount,
+  variant = "card",
+  onCommentCountChange,
+  className,
 }: {
   tripId: string;
   initialCommentCount: number;
+  variant?: "card" | "embedded";
+  onCommentCountChange?: (count: number) => void;
+  className?: string;
 }) {
   const [comments, setComments] = useState<TripComment[]>([]);
   const [commentCount, setCommentCount] = useState(initialCommentCount);
@@ -43,6 +50,16 @@ export function TripCommentsSection({
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const onCountChangeRef = useRef(onCommentCountChange);
+
+  useEffect(() => {
+    onCountChangeRef.current = onCommentCountChange;
+  }, [onCommentCountChange]);
+
+  const updateCount = useCallback((count: number) => {
+    setCommentCount(count);
+    onCountChangeRef.current?.(count);
+  }, []);
 
   const load = useCallback(
     async (cursor?: string) => {
@@ -72,7 +89,7 @@ export function TripCommentsSection({
         const data = await load();
         if (!cancelled) {
           setComments(data.comments);
-          setCommentCount(data.commentCount);
+          updateCount(data.commentCount);
           setNextCursor(data.nextCursor);
         }
       } catch (err) {
@@ -87,7 +104,7 @@ export function TripCommentsSection({
     return () => {
       cancelled = true;
     };
-  }, [load]);
+  }, [load, updateCount]);
 
   async function loadMore() {
     if (!nextCursor) return;
@@ -95,7 +112,7 @@ export function TripCommentsSection({
     try {
       const data = await load(nextCursor);
       setComments((prev) => [...prev, ...data.comments]);
-      setCommentCount(data.commentCount);
+      updateCount(data.commentCount);
       setNextCursor(data.nextCursor);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Daha fazla yüklenemedi.");
@@ -124,7 +141,7 @@ export function TripCommentsSection({
     setBody("");
     setComments((prev) => [payload.comment, ...prev]);
     if (typeof payload.commentCount === "number") {
-      setCommentCount(payload.commentCount);
+      updateCount(payload.commentCount);
     }
   }
 
@@ -142,10 +159,112 @@ export function TripCommentsSection({
     }
     setComments((prev) => prev.filter((row) => row.id !== commentId));
     if (typeof payload.commentCount === "number") {
-      setCommentCount(payload.commentCount);
+      updateCount(payload.commentCount);
     } else {
-      setCommentCount((prev) => Math.max(0, prev - 1));
+      updateCount(Math.max(0, commentCount - 1));
     }
+  }
+
+  const content = (
+    <div className={cn("space-y-4", className)}>
+      <form className="space-y-3" onSubmit={(e) => void onSubmit(e)}>
+        <label className="sr-only" htmlFor={`trip-comment-${tripId}`}>
+          Yorum yaz
+        </label>
+        <textarea
+          id={`trip-comment-${tripId}`}
+          value={body}
+          maxLength={COMMENT_BODY_MAX}
+          rows={variant === "embedded" ? 2 : 3}
+          placeholder="Bu plan hakkında ne düşünüyorsun?"
+          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          onChange={(e) => setBody(e.target.value)}
+          disabled={submitting}
+        />
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-muted-foreground text-xs">
+            {body.trim().length}/{COMMENT_BODY_MAX}
+          </p>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={submitting || body.trim().length === 0}
+          >
+            {submitting ? "Gönderiliyor…" : "Yorum yap"}
+          </Button>
+        </div>
+      </form>
+
+      {error ? (
+        <Alert variant="destructive">
+          <AlertTitle>Yorum</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      {loading ? (
+        <div className="space-y-2">
+          <Skeleton className="h-16 w-full" />
+          <Skeleton className="h-16 w-full" />
+        </div>
+      ) : null}
+
+      {!loading && comments.length === 0 ? (
+        <p className="text-muted-foreground text-sm">Henüz yorum yok.</p>
+      ) : null}
+
+      <ul className="space-y-4">
+        {comments.map((comment) => (
+          <li
+            key={comment.id}
+            className="space-y-1 border-t pt-3 first:border-t-0 first:pt-0"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-medium">
+                  {comment.author.displayName}
+                  <span className="text-muted-foreground font-normal">
+                    {" "}
+                    · @{comment.author.username}
+                  </span>
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {new Date(comment.createdAt).toLocaleString("tr-TR")}
+                </p>
+              </div>
+              {comment.canDelete ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={deletingId === comment.id}
+                  onClick={() => void onDelete(comment.id)}
+                >
+                  Sil
+                </Button>
+              ) : null}
+            </div>
+            <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
+          </li>
+        ))}
+      </ul>
+
+      {nextCursor ? (
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          disabled={loadingMore}
+          onClick={() => void loadMore()}
+        >
+          {loadingMore ? "Yükleniyor…" : "Daha fazla yorum"}
+        </Button>
+      ) : null}
+    </div>
+  );
+
+  if (variant === "embedded") {
+    return content;
   }
 
   return (
@@ -154,103 +273,7 @@ export function TripCommentsSection({
         <CardTitle>Yorumlar</CardTitle>
         <CardDescription>{commentCount} yorum</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <form className="space-y-3" onSubmit={(e) => void onSubmit(e)}>
-          <label className="sr-only" htmlFor="trip-comment">
-            Yorum yaz
-          </label>
-          <textarea
-            id="trip-comment"
-            value={body}
-            maxLength={COMMENT_BODY_MAX}
-            rows={3}
-            placeholder="Bu plan hakkında ne düşünüyorsun?"
-            className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-            onChange={(e) => setBody(e.target.value)}
-            disabled={submitting}
-          />
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-muted-foreground text-xs">
-              {body.trim().length}/{COMMENT_BODY_MAX}
-            </p>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={submitting || body.trim().length === 0}
-            >
-              {submitting ? "Gönderiliyor…" : "Yorum yap"}
-            </Button>
-          </div>
-        </form>
-
-        {error ? (
-          <Alert variant="destructive">
-            <AlertTitle>Yorum</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        ) : null}
-
-        {loading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-16 w-full" />
-            <Skeleton className="h-16 w-full" />
-          </div>
-        ) : null}
-
-        {!loading && comments.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            Henüz yorum yok. İlk yorumu sen yaz.
-          </p>
-        ) : null}
-
-        <ul className="space-y-4">
-          {comments.map((comment) => (
-            <li
-              key={comment.id}
-              className="space-y-1 border-t pt-3 first:border-t-0 first:pt-0"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium">
-                    {comment.author.displayName}
-                    <span className="text-muted-foreground font-normal">
-                      {" "}
-                      · @{comment.author.username}
-                    </span>
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    {new Date(comment.createdAt).toLocaleString("tr-TR")}
-                  </p>
-                </div>
-                {comment.canDelete ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={deletingId === comment.id}
-                    onClick={() => void onDelete(comment.id)}
-                  >
-                    Sil
-                  </Button>
-                ) : null}
-              </div>
-              <p className="text-sm whitespace-pre-wrap">{comment.body}</p>
-            </li>
-          ))}
-        </ul>
-
-        {nextCursor ? (
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            disabled={loadingMore}
-            onClick={() => void loadMore()}
-          >
-            {loadingMore ? "Yükleniyor…" : "Daha fazla yorum"}
-          </Button>
-        ) : null}
-      </CardContent>
+      <CardContent>{content}</CardContent>
     </Card>
   );
 }
