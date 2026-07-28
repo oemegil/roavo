@@ -5,23 +5,43 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-export type MapPin = {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  subtitle?: string | null;
-};
+import type { PlanMapPin } from "@/features/maps/google-export";
 
-const pinIcon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+export type MapPin = PlanMapPin;
+
+const DAY_COLORS = [
+  "#0f766e",
+  "#b45309",
+  "#1d4ed8",
+  "#be123c",
+  "#7c3aed",
+  "#047857",
+  "#c2410c",
+  "#0369a1",
+] as const;
+
+function pinIconForDay(dayNumber?: number) {
+  const color =
+    dayNumber != null
+      ? DAY_COLORS[(Math.max(1, dayNumber) - 1) % DAY_COLORS.length]
+      : "#0f766e";
+  const label = dayNumber != null ? String(dayNumber) : "•";
+  return L.divIcon({
+    className: "roavo-map-pin",
+    html: `<div style="
+      background:${color};
+      color:#fff;
+      width:28px;height:28px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font:600 12px/1 system-ui,sans-serif;
+      border:2px solid #fff;
+      box-shadow:0 1px 4px rgba(0,0,0,.35);
+    ">${label}</div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -14],
+  });
+}
 
 function FitBounds({ pins }: { pins: MapPin[] }) {
   const map = useMap();
@@ -54,7 +74,7 @@ export function ItineraryMap({
   if (pins.length === 0) {
     return (
       <div
-        className={`bg-muted text-muted-foreground flex items-center justify-center rounded-xl border text-sm ${className ?? "h-72"}`}
+        className={`bg-muted text-muted-foreground flex items-center justify-center rounded-xl border text-sm ${className ?? "h-80"}`}
       >
         Haritada gösterilecek konum bulunamadı.
       </div>
@@ -62,13 +82,13 @@ export function ItineraryMap({
   }
 
   return (
-    <div className={`overflow-hidden rounded-xl border ${className ?? "h-72"}`}>
+    <div className={`overflow-hidden rounded-xl border ${className ?? "h-80"}`}>
       <MapContainer
         center={center}
         zoom={12}
         scrollWheelZoom
         className="h-full w-full"
-        style={{ minHeight: 280 }}
+        style={{ minHeight: 320 }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -76,9 +96,19 @@ export function ItineraryMap({
         />
         <FitBounds pins={pins} />
         {pins.map((pin) => (
-          <Marker key={pin.id} position={[pin.latitude, pin.longitude]} icon={pinIcon}>
+          <Marker
+            key={pin.id}
+            position={[pin.latitude, pin.longitude]}
+            icon={pinIconForDay(pin.dayNumber)}
+          >
             <Popup>
               <strong>{pin.name}</strong>
+              {pin.dayNumber != null ? (
+                <>
+                  <br />
+                  <span>Gün {pin.dayNumber}</span>
+                </>
+              ) : null}
               {pin.subtitle ? (
                 <>
                   <br />

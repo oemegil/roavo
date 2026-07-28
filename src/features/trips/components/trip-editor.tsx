@@ -47,19 +47,23 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
 
   const mapPins = useMemo(
     () =>
-      (selectedDay?.items ?? [])
-        .filter(
-          (item) =>
-            item.latitude != null && item.longitude != null && item.type !== "NOTE",
-        )
-        .map((item) => ({
-          id: item.id,
-          name: item.title,
-          latitude: item.latitude!,
-          longitude: item.longitude!,
-          subtitle: item.locationName,
-        })),
-    [selectedDay],
+      orderedDays.flatMap((day, dayIndex) =>
+        day.items
+          .filter(
+            (item) =>
+              item.latitude != null && item.longitude != null && item.type !== "NOTE",
+          )
+          .map((item) => ({
+            id: item.id,
+            name: item.title,
+            latitude: item.latitude!,
+            longitude: item.longitude!,
+            subtitle: item.locationName,
+            dayNumber: dayIndex + 1,
+            dayLabel: `Gün ${dayIndex + 1}${day.title ? ` · ${day.title}` : ""}`,
+          })),
+      ),
+    [orderedDays],
   );
 
   const readOnly = trip.status === "ARCHIVED";
@@ -121,8 +125,11 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
         </p>
         <h1 className="text-heading">{trip.title}</h1>
         <p className="text-muted-foreground text-body">
-          {trip.originName} → {trip.destinationName ?? "Destinasyon belirlenmedi"} ·{" "}
-          {trip.startDate} – {trip.endDate}
+          {trip.originName && trip.originName !== "Belirtilmedi"
+            ? `${trip.originName} → `
+            : ""}
+          {trip.destinationName ?? "Destinasyon belirlenmedi"} · {trip.startDate} –{" "}
+          {trip.endDate}
         </p>
         {!readOnly ? (
           <div className="flex flex-wrap gap-2">
@@ -141,6 +148,7 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
             ) : null}
           </div>
         ) : null}
+        <ShowOnMapButton readyPins={mapPins} planTitle={trip.title} />
       </div>
 
       {error ? (
@@ -196,8 +204,6 @@ export function TripEditor({ initialTrip }: { initialTrip: TripDetailDto }) {
                 Bu gün için henüz program yok.
               </p>
             ) : null}
-
-            <ShowOnMapButton readyPins={mapPins} />
 
             <ul className="space-y-3">
               {selectedDay.items.map((item, index) => (

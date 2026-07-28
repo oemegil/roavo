@@ -50,12 +50,12 @@ export async function createPlanTripService(input: {
   const days = generateDaysForRange(startDate, endDate);
 
   const stopNames = cities.map((c) => c.nameTr).join(" · ");
-  const originName = input.data.origin?.name ?? "Türkiye";
+  const primary = cities[0]!;
+  const originName = input.data.origin?.name ?? "Belirtilmedi";
   const title =
     input.data.title?.trim() ||
     input.data.itinerary?.titleSuggestion?.trim() ||
-    `${originName} → ${stopNames}`;
-  const primary = cities[0]!;
+    (cities.length === 1 ? `${primary.nameTr} planı` : `${stopNames} planı`);
 
   let destinationId: string | null = null;
   if (primary.destinationSlug) {

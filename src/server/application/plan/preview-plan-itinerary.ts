@@ -92,9 +92,11 @@ export async function previewPlanItineraryService(input: {
   });
 
   const stopNames = cities.map((c) => c.nameTr).join(" · ");
-  const originName = input.data.origin?.name ?? "Türkiye";
-  const title = input.data.title?.trim() || `${originName} → ${stopNames}`;
   const primary = cities[0]!;
+  const originName = input.data.origin?.name ?? "Belirtilmedi";
+  const title =
+    input.data.title?.trim() ||
+    (cities.length === 1 ? `${primary.nameTr} planı` : `${stopNames} planı`);
 
   const executed = await executeStructuredAiOperation({
     userId: input.userId,
@@ -140,7 +142,7 @@ export async function previewPlanItineraryService(input: {
       endDate: input.data.endDate,
       cityIds: input.data.cityIds,
       interests: input.data.interests,
-      prompt: "itinerary-generation:v4-guidebook-places",
+      prompt: "itinerary-generation:v5-warm-places",
     }),
     domainValidate: (output) => {
       const parsed = generatedItinerarySchema.safeParse(output);

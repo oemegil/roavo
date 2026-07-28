@@ -17,7 +17,7 @@ const geocodeBodySchema = z.object({
       }),
     )
     .min(1)
-    .max(40),
+    .max(80),
 });
 
 export async function POST(request: Request) {

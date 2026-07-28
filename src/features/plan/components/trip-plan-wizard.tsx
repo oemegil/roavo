@@ -595,7 +595,7 @@ export function TripPlanWizard() {
         <p className="text-muted-foreground text-xs">{dayCount} gün</p>
       ) : null}
 
-      {mode !== "manual" ? (
+      {mode === "tickets" ? (
         <div className="space-y-2">
           <Label htmlFor="origin">Kalkış şehri</Label>
           <Input
@@ -965,6 +965,19 @@ export function TripPlanWizard() {
             <p className="text-muted-foreground text-xs">
               Henüz kaydedilmedi. Beğenirsen “Planı kaydet” ile gezilerine ekle.
             </p>
+            <ShowOnMapButton
+              planTitle={
+                planPreview.titleSuggestion?.trim() || planTitle.trim() || "Roavo planı"
+              }
+              places={planPreview.days.flatMap((day) =>
+                (day.places ?? []).map((place) => ({
+                  name: place.name,
+                  city: place.city ?? day.cityName ?? null,
+                  dayNumber: day.dayNumber,
+                  dayLabel: `Gün ${day.dayNumber}${day.cityName ? ` · ${day.cityName}` : ""}`,
+                })),
+              )}
+            />
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -1003,17 +1016,6 @@ export function TripPlanWizard() {
               <p className="text-sm leading-relaxed whitespace-pre-wrap">
                 {planPreview.days[selectedPreviewDay]!.scheduleText}
               </p>
-              <ShowOnMapButton
-                places={(planPreview.days[selectedPreviewDay]!.places ?? []).map(
-                  (place) => ({
-                    name: place.name,
-                    city:
-                      place.city ??
-                      planPreview.days[selectedPreviewDay]!.cityName ??
-                      null,
-                  }),
-                )}
-              />
               {planPreview.days[selectedPreviewDay]!.eventsHighlight ? (
                 <div className="rounded-xl border border-amber-500/40 bg-amber-500/5 p-3 text-sm">
                   <p className="font-medium">Etkinlik notu</p>
